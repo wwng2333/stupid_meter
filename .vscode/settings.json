@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "*.h": "cpp",
+        "main.C": "cpp"
+    }
+}

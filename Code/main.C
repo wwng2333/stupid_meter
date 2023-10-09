@@ -32,7 +32,6 @@ void main (void)
 	LCD_DrawLine(102,5,102,75,WHITE);
 	while(1)
 	{
-		//LCD_Fill(0,0,LCD_W,LCD_H,BLACK);
 		V = 1.25 * (float)I2C_Read_2Byte(0x02) / 1000; //Voltage
 		if(V > 10.0) sprintf(Voltage, "%.2fV", V);
 		else sprintf(Voltage, "%.3fV", V);

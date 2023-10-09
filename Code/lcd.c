@@ -2,6 +2,12 @@
 #include "lcd_init.h"
 #include "lcdfont.h"
 
+#include "N76E003.h"
+#include "SFR_Macro.h"
+#include "Function_define.h"
+#include "Common.h"
+#include "Delay.h"
+
 /******************************************************************************
 	  函数说明：在指定区域填充颜色
 	  入口数据：xsta,ysta   起始坐标
@@ -448,7 +454,7 @@ void LCD_ShowChar(u16 x, u16 y, u8 num, u16 fc, u16 bc, u8 sizey, u8 mode)
 
 void LCD_ShowChar2416(u16 x, u16 y, u8 num, u16 fc, u16 bc)
 {
-	u8 temp, sizex, t, m = 0, sizey;
+	u8 sizex, t, m = 0, sizey;
 	u16 i; // 一个字符所占字节大小
 	u16 x0 = x;
 	sizex = 16;
@@ -458,10 +464,9 @@ void LCD_ShowChar2416(u16 x, u16 y, u8 num, u16 fc, u16 bc)
 	LCD_Address_Set(x, y, x + 15, y + 23); // 设置光标位置
 	for (i = 0; i < 48; i++)
 	{
-		temp = ascii_2412[num][i]; // 调用12x24字体
 		for (t = 0; t < 8; t++)
 		{
-			if (temp & (0x01 << t))
+			if (ascii_2412[num][i] & (0x01 << t))
 				LCD_WR_DATA(fc);
 			else
 				LCD_WR_DATA(bc);
