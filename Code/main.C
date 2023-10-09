@@ -33,17 +33,20 @@ void main (void)
 	{
 		//LCD_Fill(0,0,LCD_W,LCD_H,BLACK);
 		V = 1.25 * (float)I2C_Read_2Byte(0x02) / 1000; //Voltage
-		sprintf(Voltage, "%.2fV", V);
-		LCD_ShowString(0,-4,Voltage,GBLUE,BLACK,32, 0);
-
-		P = 0.01 * 25 * (float)I2C_Read_2Byte(0x03); //Power
-		sprintf(Power, "%.2fmW", P);
-		LCD_ShowString(0,48, Power,GBLUE,BLACK,32, 0);
+		if(V > 10.0) sprintf(Voltage, "%.2fV", V);
+		else sprintf(Voltage, "%.3fV", V);
+		LCD_ShowString(0,-4,Voltage,BLUE,BLACK,32, 0);
 		
 		id = I2C_Read_2Byte(0x04);
 		A = ((float)id) / 10000; //Current
 		sprintf(Current, "%.3fA", A);
-		LCD_ShowString(0,21,Current,GBLUE,BLACK,32, 0);
+		LCD_ShowString(0,21,Current,GREEN,BLACK,32, 0);
+
+		P = V*A; //Power
+		if(P > 10.0) sprintf(Power, "%.2fW", P);
+		else if(P > 100.0) sprintf(Power, "%.1fW", P);
+		else sprintf(Power, "%.3fW", P);
+		LCD_ShowString(0,48, Power,GBLUE,BLACK,32, 0);
 	}
 }
 
