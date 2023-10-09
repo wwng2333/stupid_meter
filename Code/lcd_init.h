@@ -3,7 +3,7 @@
 
 #include "N76E003.h"
 
-#define USE_HORIZONTAL 3  //ÉèÖÃºáÆÁ»òÕßÊúÆÁÏÔÊ¾ 0»ò1ÎªÊúÆÁ 2»ò3ÎªºáÆÁ
+#define USE_HORIZONTAL 3  //ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ 0ï¿½ï¿½1Îªï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½3Îªï¿½ï¿½ï¿½ï¿½
 
 
 #if USE_HORIZONTAL==0||USE_HORIZONTAL==1
@@ -25,7 +25,7 @@ sbit LCD_DC =P0^6;//DC
 sbit LCD_CS =P0^7; //CS
 sbit LCD_BLK=P1^7; //BLK
 
-//-----------------LCD¶Ë¿Ú¶¨Òå----------------
+//-----------------LCDï¿½Ë¿Ú¶ï¿½ï¿½ï¿½----------------
 
 #define LCD_SCLK_Clr() LCD_SCL=0//SCL=SCLK
 #define LCD_SCLK_Set() LCD_SCL=1
@@ -47,14 +47,14 @@ sbit LCD_BLK=P1^7; //BLK
 
 
 
-//void delay_ms(unsigned int ms);//²»×¼È·ÑÓÊ±º¯Êý
-void LCD_GPIO_Init(void);//³õÊ¼»¯GPIO
-void LCD_Writ_Bus(u8 dat);//Ä£ÄâSPIÊ±Ðò
-void LCD_WR_DATA8(u8 dat);//Ð´ÈëÒ»¸ö×Ö½Ú
-void LCD_WR_DATA(u16 dat);//Ð´ÈëÁ½¸ö×Ö½Ú
-void LCD_WR_REG(u8 dat);//Ð´ÈëÒ»¸öÖ¸Áî
-void LCD_Address_Set(u16 x1,u16 y1,u16 x2,u16 y2);//ÉèÖÃ×ø±êº¯Êý
-void LCD_Init(void);//LCD³õÊ¼»¯
+//void delay_ms(unsigned int ms);//ï¿½ï¿½×¼È·ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+void LCD_GPIO_Init(void);//ï¿½ï¿½Ê¼ï¿½ï¿½GPIO
+void LCD_Writ_Bus(u8 dat);//Ä£ï¿½ï¿½SPIÊ±ï¿½ï¿½
+void LCD_WR_DATA8(u8 dat);//Ð´ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+void LCD_WR_DATA(u16 dat);//Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
+void LCD_WR_REG(u8 dat);//Ð´ï¿½ï¿½Ò»ï¿½ï¿½Ö¸ï¿½ï¿½
+void LCD_Address_Set(u16 x1,u16 y1,u16 x2,u16 y2);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½êº¯ï¿½ï¿½
+void LCD_Init(void);//LCDï¿½ï¿½Ê¼ï¿½ï¿½
 #endif
 
 

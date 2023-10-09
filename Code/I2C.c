@@ -27,7 +27,7 @@ uint16_t I2C_Read_2Byte(uint8_t addr)
 	dat2 = I2C_RecvData();
 	I2C_SendNAK();
 	I2C_Stop();
-	
+
 	dat = (dat1 << 8) + dat2;
 	return dat;
 }
