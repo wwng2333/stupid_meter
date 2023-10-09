@@ -1,17 +1,21 @@
 #include "lcd_init.h"
+#include "N76E003.h"
+#include "Common.h"
+#include "Delay.h"
+#include "SFR_Macro.h"
 #include "Function_define.h"
 
 //不准确延时函数
-void delay_ms(unsigned int ms)
-{                         
-	unsigned int a;
-	while(ms)
-	{
-		a=1800;
-		while(a--);
-		ms--;
-	}
-}
+//void delay_ms(unsigned int ms)
+//{                         
+//	unsigned int a;
+//	while(ms)
+//	{
+//		a=1800;
+//		while(a--);
+//		ms--;
+//	}
+//}
 
 void LCD_GPIO_Init(void)
 {
@@ -140,15 +144,15 @@ void LCD_Address_Set(u16 x1,u16 y1,u16 x2,u16 y2)
 void LCD_Init(void)
 {
 	LCD_RES_Clr();//复位
-	delay_ms(100);
+	Timer0_Delay1ms(100);
 	LCD_RES_Set();
-	delay_ms(100);
+	Timer0_Delay1ms(100);
 	
 	LCD_BLK_Set();//打开背光
-  delay_ms(100);
+  Timer0_Delay1ms(100);
 	
 	LCD_WR_REG(0x11);     //Sleep out
-	delay_ms(120);                //Delay 120ms
+	Timer0_Delay1ms(120);                //Delay 120ms
 	LCD_WR_REG(0xB1);     //Normal mode
 	LCD_WR_DATA8(0x05);   
 	LCD_WR_DATA8(0x3C);   

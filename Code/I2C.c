@@ -1,27 +1,8 @@
 #include "N76E003.h"
 #include "Common.h"
 #include "Function_define.h"
+#include "Delay.h"
 #include "I2C.h"
-
-void Delay12us() //@11.0592MHz
-{
-	unsigned char data i;
-
-	i = 14;
-	while (--i)
-		;
-}
-
-void Delay30us() //@11.0592MHz
-{
-	unsigned char i;
-
-	_nop_();
-	_nop_();
-	i = 108;
-	while (--i)
-		;
-}
 
 void I2C_Init()
 {
@@ -60,7 +41,7 @@ uint8_t I2C_ReadByte(uint8_t addr)
 	I2C_SendData(addr);
 	I2C_RecvACK();
 
-	Delay30us();
+	Timer3_Delay10us(1);
 
 	I2C_Start();
 	I2C_SendData(INA226 + 1);
@@ -101,9 +82,9 @@ void I2C_Start()
 {
 	SDA = 1;
 	SCL = 1;
-	Delay12us();
+	Timer3_Delay10us(1);
 	SDA = 0;
-	Delay12us();
+	Timer3_Delay10us(1);
 	SCL = 0;
 }
 
@@ -113,14 +94,14 @@ void I2C_SendData(uint8_t dat)
 	for (i = 0; i < 8; i++)
 	{
 		SCL = 0;
-		Delay12us();
+		Timer3_Delay10us(1);
 		if (dat & 0x80)
 			SDA = 1;
 		else
 			SDA = 0;
 		dat <<= 1;
 		SCL = 1;
-		Delay12us();
+		Timer3_Delay10us(1);
 	}
 	SCL = 0;
 }
@@ -128,24 +109,24 @@ void I2C_SendData(uint8_t dat)
 void I2C_SendACK()
 {
 	SCL = 0;
-	Delay12us();
+	Timer3_Delay10us(1);
 	SDA = 0;
 	SCL = 1;
-	Delay12us();
+	Timer3_Delay10us(1);
 	SCL = 0;
 	SDA = 1;
-	Delay12us();
+	Timer3_Delay10us(1);
 }
 
 void I2C_RecvACK()
 {
 	SCL = 0;
-	Delay12us();
+	Timer3_Delay10us(1);
 	SDA = 1;
 	SCL = 1;
-	Delay12us();
+	Timer3_Delay10us(1);
 	SCL = 0;
-	Delay12us();
+	Timer3_Delay10us(1);
 }
 
 uint8_t I2C_RecvData()
@@ -155,9 +136,9 @@ uint8_t I2C_RecvData()
 	{
 		dat <<= 1;
 		SCL = 0;
-		Delay12us();
+		Timer3_Delay10us(1);
 		SCL = 1;
-		Delay12us();
+		Timer3_Delay10us(1);
 		if (SDA)
 			dat += 1;
 	}
@@ -167,19 +148,19 @@ uint8_t I2C_RecvData()
 void I2C_SendNAK()
 {
 	SCL = 0;
-	Delay12us();
+	Timer3_Delay10us(1);
 	SDA = 1;
 	SCL = 1;
-	Delay12us();
+	Timer3_Delay10us(1);
 	SCL = 0;
-	Delay12us();
+	Timer3_Delay10us(1);
 }
 
 void I2C_Stop()
 {
 	SDA = 0;
 	SCL = 1;
-	Delay12us();
+	Timer3_Delay10us(1);
 	SDA = 1;
-	Delay12us();
+	Timer3_Delay10us(1);
 }
