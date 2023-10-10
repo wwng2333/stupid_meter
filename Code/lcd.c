@@ -452,6 +452,23 @@ void LCD_ShowChar(u16 x, u16 y, u8 num, u16 fc, u16 bc, u8 sizey, u8 mode)
 	}
 }
 
+void LCD_ShowCharDot(u16 x, u16 y, u16 fc, u16 bc)
+{
+	u8 t, m = 0;
+	u16 i; // 一个字符所占字节大小
+	LCD_Address_Set(x, y, x + 7, y + 23); // 设置光标位置
+	for (i = 0; i < 24; i++)
+	{
+		for (t = 0; t < 8; t++)
+		{
+			if (dot[i] & (0x01 << t))
+				LCD_WR_DATA(fc);
+			else
+				LCD_WR_DATA(bc);
+		}
+	}
+}
+
 void LCD_ShowChar2416(u16 x, u16 y, u8 num, u16 fc, u16 bc)
 {
 	u8 sizex, t, m = 0, sizey;
@@ -504,8 +521,14 @@ void LCD_ShowString2416(u16 x, u16 y, const u8 *p, u16 fc, u16 bc)
 {
 	while (*p != '\0')
 	{
-		LCD_ShowChar2416(x, y, *p, fc, bc);
-		x += 16;
+		if(*p == '.') 
+		{
+			LCD_ShowCharDot(x, y, fc, bc);
+			x += 5;
+		} else {
+			LCD_ShowChar2416(x, y, *p, fc, bc);
+			x += 16;
+		}
 		p++;
 	}
 }
