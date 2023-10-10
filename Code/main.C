@@ -8,46 +8,52 @@
 #include "lcd.h"
 #include "I2C.h"
 
-void main (void) 
+void main(void)
 {
-	char Voltage[8] = 0;
-	char Power[8] = 0;
-	char Current[8] = 0;
+	char Voltage[8] = {0};
+	char Power[8] = {0};
+	char Current[8] = {0};
 	float V = 0.0f;
 	float A = 0.0f;
 	float P = 0.0f;
-	
+
 	LCD_GPIO_Init();
 	I2C_Init();
-	P16_PushPull_Mode; //Debug
-	P16=0;
-	
+	P16_PushPull_Mode; // Debug
+	P16 = 0;
+
 	LCD_Init();
-	LCD_Fill(0,0,LCD_W,LCD_H,BLACK);
-	//LCD_ShowString(1,1,"hello world",WHITE,BLACK,24,0);
-	
+	LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
+	// LCD_ShowString(1,1,"hello world",WHITE,BLACK,24,0);
+
 	I2C_Write_2Byte(0x00, 0x45FF);
-	I2C_Write_2Byte(0x05, 0x0A00); //2560, 0.2mA
-	LCD_DrawLine(88,2,88,78,WHITE);
-	LCD_DrawLine(89,2,89,78,WHITE);
-	while(1)
+	I2C_Write_2Byte(0x05, 0x0A00); // 2560, 0.2mA
+	LCD_DrawLine(88, 2, 88, 78, WHITE);
+	LCD_DrawLine(89, 2, 89, 78, WHITE);
+	while (1)
 	{
-		V = 1.25 * (float)I2C_Read_2Byte(0x02) / 1000; //Voltage
-		if(V > 10.0) sprintf(Voltage, "%.2fV", V);
-		else sprintf(Voltage, "%.3fV", V);
+		V = 1.25 * (float)I2C_Read_2Byte(0x02) / 1000; // Voltage
+		if (V > 10.0)
+			sprintf(Voltage, "%.2fV", V);
+		else
+			sprintf(Voltage, "%.3fV", V);
 		LCD_ShowString2416(0, 2, Voltage, LIGHTBLUE, BLACK);
 
-		A = ((float)I2C_Read_2Byte(0x04)) / 50000; //Current
-		if(P > 10.0) sprintf(Power, "%.2fW", P);
-		else sprintf(Current, "%.3fA", A);
+		A = ((float)I2C_Read_2Byte(0x04)) / 50000; // Current
+		if (P > 10.0)
+			sprintf(Power, "%.2fW", P);
+		else
+			sprintf(Current, "%.3fA", A);
 		LCD_ShowString2416(0, 29, Current, BLUE, BLACK);
 
-		P = V*A; //Power
-		if(P > 10.0) sprintf(Power, "%.2fW", P);
-		else if(P > 100.0) sprintf(Power, "%.1fW", P);
-		else sprintf(Power, "%.3fW", P);
+		P = V * A; // Power
+		if (P > 10.0)
+			sprintf(Power, "%.2fW", P);
+		else if (P > 100.0)
+			sprintf(Power, "%.1fW", P);
+		else
+			sprintf(Power, "%.3fW", P);
 		LCD_ShowString2416(0, 56, Power, GBLUE, BLACK);
 		P16 = ~P16;
 	}
 }
-
