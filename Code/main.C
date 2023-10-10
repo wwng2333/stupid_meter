@@ -8,6 +8,19 @@
 #include "lcd.h"
 #include "I2C.h"
 
+#define TH0_INIT        6000 
+#define TL0_INIT        6000
+
+UINT8 u8TH0_Tmp,u8TL0_Tmp;
+
+void Timer0_ISR (void) interrupt 1  //interrupt address is 0x000B
+{
+    TH0 = u8TH0_Tmp;
+    TL0 = u8TL0_Tmp;    
+    
+    P16 = ~P16;                     // GPIO1 toggle when interrupt
+}
+
 void main(void)
 {
 	char Voltage[8] = {0};
@@ -16,11 +29,23 @@ void main(void)
 	float V = 0.0f;
 	float A = 0.0f;
 	float P = 0.0f;
+	
+	TIMER0_MODE1_ENABLE;
+	clr_T1M;
+	u8TH0_Tmp = (65536-TH0_INIT)/256;
+	u8TL0_Tmp = (65536-TL0_INIT)%256; 
+	TH0 = u8TH0_Tmp;
+	TL0 = u8TL0_Tmp;
 
 	LCD_GPIO_Init();
 	I2C_Init();
 	P16_PushPull_Mode; // Debug
 	P16 = 0;
+	
+	set_ET0;
+	set_EA;
+	set_TR0;
+	//while(1);
 
 	LCD_Init();
 	LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
@@ -54,6 +79,6 @@ void main(void)
 		else
 			sprintf(Power, "%.3fW", P);
 		LCD_ShowString2416(0, 56, Power, GBLUE, BLACK);
-		P16 = ~P16;
+		//P16 = ~P16;
 	}
 }
