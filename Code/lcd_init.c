@@ -19,6 +19,10 @@
 
 void LCD_GPIO_Init(void)
 {
+	SFRS=0x01;
+	set_P0SR_4;
+	set_P0SR_6;
+	set_P3SR_0;
 	P04_PushPull_Mode;
 	P05_PushPull_Mode;
 	P06_PushPull_Mode;

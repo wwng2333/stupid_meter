@@ -23,12 +23,12 @@ void Timer0_ISR (void) interrupt 1  //interrupt address is 0x000B
 
 void main(void)
 {
+	uint32_t V_fixed = 0;
+	uint32_t A_fixed = 0;
+	uint32_t P_fixed = 0;
 	char Voltage[8] = {0};
 	char Power[8] = {0};
 	char Current[8] = {0};
-	float V = 0.0f;
-	float A = 0.0f;
-	float P = 0.0f;
 	
 	TIMER0_MODE1_ENABLE;
 	clr_T1M;
@@ -37,6 +37,7 @@ void main(void)
 	TH0 = u8TH0_Tmp;
 	TL0 = u8TL0_Tmp;
 
+	LCD_Init();
 	LCD_GPIO_Init();
 	I2C_Init();
 	P16_PushPull_Mode; // Debug
@@ -47,9 +48,7 @@ void main(void)
 	set_TR0;
 	//while(1);
 
-	LCD_Init();
 	LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
-	// LCD_ShowString(1,1,"hello world",WHITE,BLACK,24,0);
 
 	I2C_Write_2Byte(0x00, 0x45FF);
 	I2C_Write_2Byte(0x05, 0x0A00); // 2560, 0.2mA
@@ -57,28 +56,28 @@ void main(void)
 	LCD_DrawLine(89, 2, 89, 78, WHITE);
 	while (1)
 	{
-		V = 1.25 * (float)I2C_Read_2Byte(0x02) / 1000; // Voltage
-		if (V > 10.0)
-			sprintf(Voltage, "%.2fV", V);
+		V_fixed = 1.25 * (uint32_t)I2C_Read_2Byte(0x02);
+		if (V_fixed > 10000)
+				sprintf(Voltage, "%d.%02dV", (uint16_t)(V_fixed/1000), (uint16_t)(V_fixed%1000));
 		else
-			sprintf(Voltage, "%.3fV", V);
+				sprintf(Voltage, "%d.%03dV", (uint16_t)(V_fixed/1000), (uint16_t)(V_fixed%1000));
 		LCD_ShowString2416(0, 2, Voltage, LIGHTBLUE, BLACK);
 
-		A = ((float)I2C_Read_2Byte(0x04)) / 50000; // Current
-		if (P > 10.0)
-			sprintf(Power, "%.2fW", P);
+		A_fixed = (uint32_t)I2C_Read_2Byte(0x04) / 50;
+		if (A_fixed > 10000)
+			sprintf(Current, "%d.%02dA", (uint16_t)(A_fixed/1000), (uint16_t)(A_fixed%1000));
 		else
-			sprintf(Current, "%.3fA", A);
+			sprintf(Current, "%d.%03dA", (uint16_t)(A_fixed/1000), (uint16_t)(A_fixed%1000));
 		LCD_ShowString2416(0, 29, Current, BLUE, BLACK);
 
-		P = V * A; // Power
-		if (P > 10.0)
-			sprintf(Power, "%.2fW", P);
-		else if (P > 100.0)
-			sprintf(Power, "%.1fW", P);
+		P_fixed = (uint32_t)(V_fixed * A_fixed / 1000); // Power
+		if (P_fixed > 10000)
+			sprintf(Power, "%d.%02dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
+		else if (P_fixed > 100000)
+			sprintf(Power, "%d.%01dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
 		else
-			sprintf(Power, "%.3fW", P);
+			sprintf(Power, "%d.%03dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
 		LCD_ShowString2416(0, 56, Power, GBLUE, BLACK);
-		//P16 = ~P16;
+		P16 = ~P16;
 	}
 }
