@@ -37,8 +37,8 @@ void main(void)
 	TH0 = u8TH0_Tmp;
 	TL0 = u8TL0_Tmp;
 
-	LCD_Init();
 	LCD_GPIO_Init();
+	LCD_Init();
 	I2C_Init();
 	P16_PushPull_Mode; // Debug
 	P16 = 0;
@@ -46,14 +46,13 @@ void main(void)
 	set_ET0;
 	set_EA;
 	set_TR0;
-	//while(1);
 
-	LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
+	LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);	
+	LCD_DrawLine(88, 2, 88, 78, WHITE);
+	LCD_DrawLine(89, 2, 89, 78, WHITE);
 
 	I2C_Write_2Byte(0x00, 0x45FF);
 	I2C_Write_2Byte(0x05, 0x0A00); // 2560, 0.2mA
-	LCD_DrawLine(88, 2, 88, 78, WHITE);
-	LCD_DrawLine(89, 2, 89, 78, WHITE);
 	while (1)
 	{
 		V_fixed = 1.25 * (uint32_t)I2C_Read_2Byte(0x02);
@@ -78,6 +77,6 @@ void main(void)
 		else
 			sprintf(Power, "%d.%03dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
 		LCD_ShowString2416(0, 56, Power, GBLUE, BLACK);
-		P16 = ~P16;
+		//P16 = ~P16;
 	}
 }
