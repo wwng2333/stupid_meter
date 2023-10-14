@@ -65,27 +65,26 @@ void main(void)
 		if (V_fixed < 10000) {
 				sprintf(Voltage, "%d.%03dV", (uint16_t)(V_fixed/1000), (uint16_t)(V_fixed%1000));
 		} else {
-				sprintf(Voltage, "%d.%02dV", (uint16_t)(V_fixed/1000), (uint16_t)(V_fixed%1000));
-		LCD_ShowString2416(0, 2, Voltage, LIGHTBLUE, BLACK);
+				sprintf(Voltage, "%d.%02dV", (uint16_t)(V_fixed/1000), (uint16_t)(V_fixed%100));
 		}
+		LCD_ShowString2416(0, 2, Voltage, LIGHTBLUE, BLACK);
 		
 		A_fixed = (uint32_t)I2C_Read_2Byte(0x04) / 50;
-		if (A_fixed < 1000) {
+		if (A_fixed < 10000) {
 			sprintf(Current, "%d.%03dA", (uint16_t)(A_fixed/1000), (uint16_t)(A_fixed%1000));
 		} else {
-			sprintf(Current, "%d.%02dA", (uint16_t)(A_fixed/1000), (uint16_t)(A_fixed%1000));
+			sprintf(Current, "%d.%02dA", (uint16_t)(A_fixed/1000), (uint16_t)(A_fixed%100));
 		}
 		LCD_ShowString2416(0, 29, Current, BLUE, BLACK);
 
 		P_fixed = (uint32_t)(V_fixed * A_fixed / 1000); // Power
-		if (P_fixed < 10000) {
+		if (P_fixed < (uint32_t)10000) {
 			sprintf(Power, "%d.%03dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
-		}	else if (P_fixed > 10000) {
-			sprintf(Power, "%d.%02dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
+		}	else if (P_fixed > (uint32_t)10000) {
+			sprintf(Power, "%d.%02dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%100));
 		} else {
-			sprintf(Power, "%d.%01dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
+			sprintf(Power, "%d.%dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%10));
 		}
-		//sprintf(Power, "%lu", P_fixed);
 		LCD_ShowString2416(0, 56, Power, GBLUE, BLACK);
 		
 		sprintf(Calc, "T0:%d", T0_Calc);
