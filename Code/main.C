@@ -35,6 +35,7 @@ void Timer0_Init(void)
 
 void main(void)
 {
+	//uint16_t RGB = 0;
 	float mAh = 0;
 	float mWh = 0;
 	uint32_t V_fixed = 0;
@@ -61,26 +62,30 @@ void main(void)
 	while (1)
 	{
 		V_fixed = 1.25 * (uint32_t)I2C_Read_2Byte(0x02);
-		if (V_fixed >= 10000)
-				sprintf(Voltage, "%d.%02dV", (uint16_t)(V_fixed/1000), (uint16_t)(V_fixed%1000));
-		else
+		if (V_fixed < 10000) {
 				sprintf(Voltage, "%d.%03dV", (uint16_t)(V_fixed/1000), (uint16_t)(V_fixed%1000));
+		} else {
+				sprintf(Voltage, "%d.%02dV", (uint16_t)(V_fixed/1000), (uint16_t)(V_fixed%1000));
 		LCD_ShowString2416(0, 2, Voltage, LIGHTBLUE, BLACK);
-
+		}
+		
 		A_fixed = (uint32_t)I2C_Read_2Byte(0x04) / 50;
-		if (A_fixed >= 10000)
-			sprintf(Current, "%d.%02dA", (uint16_t)(A_fixed/1000), (uint16_t)(A_fixed%1000));
-		else
+		if (A_fixed < 1000) {
 			sprintf(Current, "%d.%03dA", (uint16_t)(A_fixed/1000), (uint16_t)(A_fixed%1000));
+		} else {
+			sprintf(Current, "%d.%02dA", (uint16_t)(A_fixed/1000), (uint16_t)(A_fixed%1000));
+		}
 		LCD_ShowString2416(0, 29, Current, BLUE, BLACK);
 
 		P_fixed = (uint32_t)(V_fixed * A_fixed / 1000); // Power
-		if (P_fixed >= 1000)
-			sprintf(Power, "%d.%02dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
-		else if (P_fixed >= 10000)
-			sprintf(Power, "%d.%01dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
-		else
+		if (P_fixed < 10000) {
 			sprintf(Power, "%d.%03dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
+		}	else if (P_fixed > 10000) {
+			sprintf(Power, "%d.%02dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
+		} else {
+			sprintf(Power, "%d.%01dW", (uint16_t)(P_fixed/1000), (uint16_t)(P_fixed%1000));
+		}
+		//sprintf(Power, "%lu", P_fixed);
 		LCD_ShowString2416(0, 56, Power, GBLUE, BLACK);
 		
 		sprintf(Calc, "T0:%d", T0_Calc);
@@ -92,5 +97,9 @@ void main(void)
 		LCD_ShowString(92, 16, Calc, GBLUE, BLACK, 12, 0);
 		sprintf(Calc, "%.2fmWh", mWh);
 		LCD_ShowString(92, 32, Calc, GBLUE, BLACK, 12, 0);
+		//sprintf(Calc, "%d", RGB);
+		//LCD_ShowString(92, 48, Calc, GBLUE, BLACK, 12, 0);
+		//RGB += 0x01;
+		P16 = ~P16;
 	}
 }
