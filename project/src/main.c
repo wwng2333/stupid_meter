@@ -102,15 +102,29 @@ int main(void)
 	LCD_Init();
 	LCD_Fill(0,0,LCD_W,LCD_H,WHITE);
 	LCD_ShowString(10,20,"LCD_W:",RED,WHITE,16,0);
-  /* add user code end 2 */
+	
+// 	volatile crm_clocks_freq_type crm_clk_freq = {};
+//	crm_clocks_freq_get((crm_clocks_freq_type*)&crm_clk_freq);
 
+  /* add user code end 2 */
   while(1)
   {
     /* add user code begin 3 */
-		gpio_bits_set(GPIOA, GPIO_PINS_2);
-		delay_ms(100);
-		gpio_bits_reset(GPIOA, GPIO_PINS_2);
-		LCD_ShowString(10,20,"LCD_W:",RED,WHITE,16,0);
+		//LCD_ShowString(10,20,"LCD_W:",RED,WHITE,16,0);
+		//delay_ms(100);
+//		gpio_bits_set(GPIOA, GPIO_PINS_2);
+//		delay_ms(10);
+//		gpio_bits_reset(GPIOA, GPIO_PINS_2);
+//		LCD_ShowString(10,20,"LCD_W:",RED,WHITE,16,0);
+		
+//		spi_i2s_data_transmit(SPI1, 0xAA);
+//		while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
+//		spi_i2s_data_transmit(SPI1, 0xBB);
+//		while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
+//		spi_i2s_data_transmit(SPI1, 0xCC);
+//		while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
+//		spi_i2s_data_transmit(SPI1, 0xDD);
+//		while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
     /* add user code end 3 */
   }
 }

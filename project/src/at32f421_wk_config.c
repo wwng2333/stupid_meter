@@ -64,8 +64,12 @@
 /**
   * @brief  system clock config program
   * @note   the system clock is configured as follow:
-  *         system clock (sclk)   = hick / 12 * pll_mult
+  *         system clock (sclk)   = (hick / 12 * pll_ns)/(pll_ms * pll_fr)
   *         system clock source   = pll (hick)
+  *         - lick                = on
+  *         - lext                = off
+  *         - hick                = on
+  *         - hext                = off
   *         - sclk                = 120000000
   *         - ahbdiv              = 1
   *         - ahbclk              = 120000000
@@ -73,8 +77,9 @@
   *         - apb1clk             = 120000000
   *         - apb2div             = 1
   *         - apb2clk             = 120000000
-  *         - pll_mult            = 30
-  *         - flash_wtcyc         = 3 cycle
+  *         - pll_ns              = 240
+  *         - pll_ms              = 1
+  *         - pll_fr              = 8
   * @param  none
   * @retval none
   */
@@ -93,7 +98,7 @@ void wk_system_clock_config(void)
   while(crm_flag_get(CRM_LICK_STABLE_FLAG) != SET)
   {
   }
-
+	
   /* enable hick */
   crm_clock_source_enable(CRM_CLOCK_SOURCE_HICK, TRUE);
 
@@ -103,7 +108,7 @@ void wk_system_clock_config(void)
   }
 
   /* config pll clock resource */
-  crm_pll_config(CRM_PLL_SOURCE_HICK, CRM_PLL_MULT_30);
+  crm_pll_config2(CRM_PLL_SOURCE_HICK, 240, 1, CRM_PLL_FR_8);
 
   /* enable pll */
   crm_clock_source_enable(CRM_CLOCK_SOURCE_PLL, TRUE);
@@ -191,7 +196,7 @@ void wk_gpio_config(void)
 
   /* gpio output config */
   gpio_bits_write(GPIOA, GPIO_PINS_1 | GPIO_PINS_2 | GPIO_PINS_3 | GPIO_PINS_4, TRUE); 
-
+	gpio_bits_set(GPIOA, GPIO_PINS_4);
   gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_MODERATE;
   gpio_init_struct.gpio_out_type = GPIO_OUTPUT_PUSH_PULL;
   gpio_init_struct.gpio_mode = GPIO_MODE_OUTPUT;
@@ -386,8 +391,8 @@ void wk_spi1_init(void)
   spi_init_struct.master_slave_mode = SPI_MODE_MASTER;
   spi_init_struct.frame_bit_num = SPI_FRAME_8BIT;
   spi_init_struct.first_bit_transmission = SPI_FIRST_BIT_MSB;
-  spi_init_struct.mclk_freq_division = SPI_MCLK_DIV_512;
-  spi_init_struct.clock_polarity = SPI_CLOCK_POLARITY_LOW;
+  spi_init_struct.mclk_freq_division = SPI_MCLK_DIV_1024;
+  spi_init_struct.clock_polarity = SPI_CLOCK_POLARITY_HIGH;
   spi_init_struct.clock_phase = SPI_CLOCK_PHASE_2EDGE;
   spi_init_struct.cs_mode_selection = SPI_CS_SOFTWARE_MODE;
   spi_init(SPI1, &spi_init_struct);
