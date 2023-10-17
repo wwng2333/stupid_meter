@@ -42,7 +42,8 @@ void LCD_Writ_Bus(u8 dat)
 {	
 	LCD_CS_Clr();
 	spi_i2s_data_transmit(SPI1, dat);
-	while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
+	while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG))
+		;
 	//SEGGER_RTT_printf(0, "SPI1 sent 0x%x\r\n", dat);
   LCD_CS_Set();	
 	//delay_us(10);

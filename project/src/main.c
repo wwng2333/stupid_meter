@@ -100,15 +100,22 @@ int main(void)
 	SEGGER_RTT_printf(0, "Hello world AT32F421!\r\n");
 	delay_init();
 	LCD_Init();
-	LCD_Fill(0,0,LCD_W,LCD_H,WHITE);
-	LCD_ShowString(10,20,"LCD_W:",RED,WHITE,16,0);
+	LCD_Fill(0,0,LCD_W,LCD_H,BLACK);
+	
 	
 // 	volatile crm_clocks_freq_type crm_clk_freq = {};
 //	crm_clocks_freq_get((crm_clocks_freq_type*)&crm_clk_freq);
 
+	float t=0;
   /* add user code end 2 */
   while(1)
   {
+		LCD_ShowString(10,20,"LCD_W:",WHITE,BLACK,16,0);
+		LCD_ShowIntNum(58,20,LCD_W,3,WHITE,BLACK,16);
+		LCD_ShowString(10,40,"LCD_H:",WHITE,BLACK,16,0);
+		LCD_ShowIntNum(58,40,LCD_H,3,WHITE,BLACK,16);
+		LCD_ShowFloatNum1(10,60,t,4,WHITE,BLACK,16);
+		t+=0.1;
     /* add user code begin 3 */
 		//LCD_ShowString(10,20,"LCD_W:",RED,WHITE,16,0);
 		//delay_ms(100);
