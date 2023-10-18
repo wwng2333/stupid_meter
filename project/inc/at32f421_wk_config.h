@@ -34,17 +34,15 @@ extern "C" {
 
 /* includes -----------------------------------------------------------------------*/
 #include "at32f421.h"
-#include "delay.h"
-#include "lcd.h"
-#include "I2C.h"
-#include "lcd_init.h"
-#include "SEGGER_RTT.h"
-#include "SEGGER_RTT_Conf.h"
-#include <stdio.h>
 
 /* private includes -------------------------------------------------------------*/
 /* add user code begin private includes */
-
+#include "lcd_init.h"
+#include "lcd.h"
+#include "i2c.h"
+#include "delay.h"
+#include "SEGGER_RTT.h"
+#include <stdio.h>
 /* add user code end private includes */
 
 /* exported types -------------------------------------------------------------*/
@@ -59,7 +57,9 @@ extern "C" {
 
 /* exported macro ------------------------------------------------------------*/
 /* add user code begin exported macro */
-
+#define ADC_VREF                         (3.3)
+#define ADC_TEMP_BASE                    (1.26)
+#define ADC_TEMP_SLOPE                   (-0.00423)
 /* add user code end exported macro */
 
 /* exported functions ------------------------------------------------------- */
@@ -81,11 +81,15 @@ extern "C" {
   /* init adc1 function. */
   void wk_adc1_init(void);
 
-  /* init i2c1 function. */
-  void wk_i2c1_init(void);
-
   /* init spi1 function. */
   void wk_spi1_init(void);
+
+  /* init dma1 channel1 */
+  void wk_dma1_channel1_init(void);
+
+  /* config dma channel transfer parameter */
+  /* user need to modify parameters memory_base_addr and buffer_size */
+  void wk_dma_channel_config(dma_channel_type* dmax_channely, uint32_t peripheral_base_addr, uint32_t memory_base_addr, uint16_t buffer_size);
 
 /* add user code begin exported functions */
 

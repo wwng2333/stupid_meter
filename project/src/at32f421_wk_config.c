@@ -152,6 +152,9 @@ void wk_system_clock_config(void)
   */
 void wk_periph_clock_config(void)
 {
+  /* enable dma1 periph clock */
+  crm_periph_clock_enable(CRM_DMA1_PERIPH_CLOCK, TRUE);
+
   /* enable gpioa periph clock */
   crm_periph_clock_enable(CRM_GPIOA_PERIPH_CLOCK, TRUE);
 
@@ -169,9 +172,6 @@ void wk_periph_clock_config(void)
 
   /* enable spi1 periph clock */
   crm_periph_clock_enable(CRM_SPI1_PERIPH_CLOCK, TRUE);
-
-  /* enable i2c1 periph clock */
-  crm_periph_clock_enable(CRM_I2C1_PERIPH_CLOCK, TRUE);
 }
 
 /**
@@ -266,19 +266,21 @@ void wk_adc1_init(void)
 
   /* adc_settings----------------------------------------------------------- */
   adc_base_default_para_init(&adc_base_struct);
-  adc_base_struct.sequence_mode = FALSE;
-  adc_base_struct.repeat_mode = FALSE;
+  adc_base_struct.sequence_mode = TRUE;
+  adc_base_struct.repeat_mode = TRUE;
   adc_base_struct.data_align = ADC_RIGHT_ALIGNMENT;
-  adc_base_struct.ordinary_channel_length = 1;
+  adc_base_struct.ordinary_channel_length = 2;
   adc_base_config(ADC1, &adc_base_struct);
 
   /* adc_ordinary_conversionmode-------------------------------------------- */
-  adc_ordinary_channel_set(ADC1, ADC_CHANNEL_16, 1, ADC_SAMPLETIME_41_5);
+  adc_ordinary_channel_set(ADC1, ADC_CHANNEL_16, 1, ADC_SAMPLETIME_239_5);
+  adc_ordinary_channel_set(ADC1, ADC_CHANNEL_17, 2, ADC_SAMPLETIME_239_5);
 
   adc_ordinary_conversion_trigger_set(ADC1, ADC12_ORDINARY_TRIG_SOFTWARE, TRUE);
 
   adc_ordinary_part_mode_enable(ADC1, FALSE);
 
+  adc_dma_mode_enable(ADC1, TRUE);
   adc_enable(ADC1, TRUE);
 
   /* adc calibration-------------------------------------------------------- */
@@ -290,58 +292,6 @@ void wk_adc1_init(void)
   /* add user code begin adc1_init 2 */
 
   /* add user code end adc1_init 2 */
-}
-
-/**
-  * @brief  init i2c1 function.
-  * @param  none
-  * @retval none
-  */
-void wk_i2c1_init(void)
-{
-  /* add user code begin i2c1_init 0 */
-
-  /* add user code end i2c1_init 0 */
-
-//  gpio_init_type gpio_init_struct;
-
-//  gpio_default_para_init(&gpio_init_struct);
-
-  /* add user code begin i2c1_init 1 */
-
-  /* add user code end i2c1_init 1 */
-
-  /* configure the SCL pin */
-//  gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
-//  gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-//  gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
-//  gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_MODERATE;
-//  gpio_init_struct.gpio_pins = GPIO_PINS_1;
-//  gpio_init(GPIOF, &gpio_init_struct);
-
-//  gpio_pin_mux_config(GPIOF, GPIO_PINS_SOURCE1, GPIO_MUX_1);
-
-//  /* configure the SDA pin */
-//  gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
-//  gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-//  gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
-//  gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_MODERATE;
-//  gpio_init_struct.gpio_pins = GPIO_PINS_0;
-//  gpio_init(GPIOF, &gpio_init_struct);
-
-//  gpio_pin_mux_config(GPIOF, GPIO_PINS_SOURCE0, GPIO_MUX_1);
-
-//  i2c_init(I2C1, I2C_FSMODE_DUTY_2_1, 100000);
-//  i2c_own_address1_set(I2C1, I2C_ADDRESS_MODE_7BIT, 0x0);
-//  i2c_ack_enable(I2C1, TRUE);
-//  i2c_clock_stretch_enable(I2C1, TRUE);
-//  i2c_general_call_enable(I2C1, FALSE);
-
-//  i2c_enable(I2C1, TRUE);
-
-  /* add user code begin i2c1_init 2 */
-
-  /* add user code end i2c1_init 2 */
 }
 
 /**
@@ -414,6 +364,39 @@ void wk_spi1_init(void)
   /* add user code begin spi1_init 2 */
 
   /* add user code end spi1_init 2 */
+}
+
+/**
+  * @brief  init dma1 channel1 for "adc1"
+  * @param  none
+  * @retval none
+  */
+void wk_dma1_channel1_init(void)
+{
+  dma_init_type dma_init_struct;
+
+  dma_reset(DMA1_CHANNEL1);
+  dma_default_para_init(&dma_init_struct);
+  dma_init_struct.direction = DMA_DIR_PERIPHERAL_TO_MEMORY;
+  dma_init_struct.memory_data_width = DMA_MEMORY_DATA_WIDTH_HALFWORD;
+  dma_init_struct.memory_inc_enable = TRUE;
+  dma_init_struct.peripheral_data_width = DMA_PERIPHERAL_DATA_WIDTH_HALFWORD;
+  dma_init_struct.peripheral_inc_enable = FALSE;
+  dma_init_struct.priority = DMA_PRIORITY_HIGH;
+  dma_init_struct.loop_mode_enable = TRUE;
+  dma_init(DMA1_CHANNEL1, &dma_init_struct);
+}
+
+/**
+  * @brief  config dma channel transfer parameter
+  * @param  none
+  * @retval none
+  */
+void wk_dma_channel_config(dma_channel_type* dmax_channely, uint32_t peripheral_base_addr, uint32_t memory_base_addr, uint16_t buffer_size)
+{
+  dmax_channely->dtcnt = buffer_size;
+  dmax_channely->paddr = peripheral_base_addr;
+  dmax_channely->maddr = memory_base_addr;
 }
 
 /* add user code begin 1 */

@@ -1,4 +1,5 @@
 #include "lcd_init.h"
+#include "lcd.h"
 #include "delay.h"
 
 //void LCD_GPIO_Init(void)

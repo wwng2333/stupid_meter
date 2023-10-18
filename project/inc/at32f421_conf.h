@@ -63,7 +63,7 @@ extern "C" {
 #define PWC_MODULE_ENABLED
 #define ADC_MODULE_ENABLED
 #define SPI_MODULE_ENABLED
-/*#define DMA_MODULE_ENABLED----------------------*/
+#define DMA_MODULE_ENABLED
 #define DEBUG_MODULE_ENABLED
 #define FLASH_MODULE_ENABLED
 /*#define CRC_MODULE_ENABLED----------------------*/

@@ -38,46 +38,46 @@ void delay_us(uint32_t nus)
   * @param  nms: specifies the delay time length, in milliseconds.
   * @retval none
   */
-void delay_ms(uint16_t nms)
-{	 		  	  
-	uint32_t temp;
-	SysTick->LOAD=(uint32_t)nms*fac_ms;
-	SysTick->VAL =0x00;
-	SysTick->CTRL=SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
-	do
-	{
-		temp=SysTick->CTRL;
-	}
-	while(temp&0x01&&!(temp&(1<<16)));
- 	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-	SysTick->VAL =0X00;    
-}
 //void delay_ms(uint16_t nms)
-//{
-//  uint32_t temp = 0;
-//  while(nms)
-//  {
-//    if(nms > STEP_DELAY_MS)
-//    {
-//      SysTick->LOAD = (uint32_t)(STEP_DELAY_MS * fac_ms);
-//      nms -= STEP_DELAY_MS;
-//    }
-//    else
-//    {
-//      SysTick->LOAD = (uint32_t)(nms * fac_ms);
-//      nms = 0;
-//    }
-//    SysTick->VAL = 0x00;
-//    SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
-//    do
-//    {
-//      temp = SysTick->CTRL;
-//    }while((temp & 0x01) && !(temp & (1 << 16)));
-
-//    SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-//    SysTick->VAL = 0x00;
-//  }
+//{	 		  	  
+//	uint32_t temp;
+//	SysTick->LOAD=(uint32_t)nms*fac_ms;
+//	SysTick->VAL =0x00;
+//	SysTick->CTRL=SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
+//	do
+//	{
+//		temp=SysTick->CTRL;
+//	}
+//	while(temp&0x01&&!(temp&(1<<16)));
+// 	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+//	SysTick->VAL =0X00;    
 //}
+void delay_ms(uint16_t nms)
+{
+  uint32_t temp = 0;
+  while(nms)
+  {
+    if(nms > STEP_DELAY_MS)
+    {
+      SysTick->LOAD = (uint32_t)(STEP_DELAY_MS * fac_ms);
+      nms -= STEP_DELAY_MS;
+    }
+    else
+    {
+      SysTick->LOAD = (uint32_t)(nms * fac_ms);
+      nms = 0;
+    }
+    SysTick->VAL = 0x00;
+    SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+    do
+    {
+      temp = SysTick->CTRL;
+    }while((temp & 0x01) && !(temp & (1 << 16)));
+
+    SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+    SysTick->VAL = 0x00;
+  }
+}
 
 /**
   * @brief  inserts a delay time.
