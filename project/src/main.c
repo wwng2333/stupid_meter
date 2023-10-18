@@ -125,6 +125,9 @@ int main(void)
   /* init gpio function. */
   wk_gpio_config();
 
+  /* init tmr15 function. */
+  wk_tmr15_init();
+
   /* add user code begin 2 */
 	INA226_Init();
 	LCD_Init();	
