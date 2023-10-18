@@ -195,7 +195,16 @@ void wk_gpio_config(void)
   gpio_default_para_init(&gpio_init_struct);
 
   /* gpio output config */
+	gpio_bits_write(GPIOF, GPIO_PINS_0 | GPIO_PINS_1, TRUE); 
   gpio_bits_write(GPIOA, GPIO_PINS_1 | GPIO_PINS_2 | GPIO_PINS_3 | GPIO_PINS_4, TRUE); 
+	
+	gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_MODERATE;
+  gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
+  gpio_init_struct.gpio_mode = GPIO_MODE_OUTPUT;
+  gpio_init_struct.gpio_pins = GPIO_PINS_0 | GPIO_PINS_1;
+  gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
+  gpio_init(GPIOF, &gpio_init_struct);
+	
 	gpio_bits_set(GPIOA, GPIO_PINS_4);
   gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_MODERATE;
   gpio_init_struct.gpio_out_type = GPIO_OUTPUT_PUSH_PULL;
@@ -294,41 +303,41 @@ void wk_i2c1_init(void)
 
   /* add user code end i2c1_init 0 */
 
-  gpio_init_type gpio_init_struct;
+//  gpio_init_type gpio_init_struct;
 
-  gpio_default_para_init(&gpio_init_struct);
+//  gpio_default_para_init(&gpio_init_struct);
 
   /* add user code begin i2c1_init 1 */
 
   /* add user code end i2c1_init 1 */
 
   /* configure the SCL pin */
-  gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
-  gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-  gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
-  gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_MODERATE;
-  gpio_init_struct.gpio_pins = GPIO_PINS_1;
-  gpio_init(GPIOF, &gpio_init_struct);
+//  gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
+//  gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
+//  gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
+//  gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_MODERATE;
+//  gpio_init_struct.gpio_pins = GPIO_PINS_1;
+//  gpio_init(GPIOF, &gpio_init_struct);
 
-  gpio_pin_mux_config(GPIOF, GPIO_PINS_SOURCE1, GPIO_MUX_1);
+//  gpio_pin_mux_config(GPIOF, GPIO_PINS_SOURCE1, GPIO_MUX_1);
 
-  /* configure the SDA pin */
-  gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
-  gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-  gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
-  gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_MODERATE;
-  gpio_init_struct.gpio_pins = GPIO_PINS_0;
-  gpio_init(GPIOF, &gpio_init_struct);
+//  /* configure the SDA pin */
+//  gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
+//  gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
+//  gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
+//  gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_MODERATE;
+//  gpio_init_struct.gpio_pins = GPIO_PINS_0;
+//  gpio_init(GPIOF, &gpio_init_struct);
 
-  gpio_pin_mux_config(GPIOF, GPIO_PINS_SOURCE0, GPIO_MUX_1);
+//  gpio_pin_mux_config(GPIOF, GPIO_PINS_SOURCE0, GPIO_MUX_1);
 
-  i2c_init(I2C1, I2C_FSMODE_DUTY_2_1, 100000);
-  i2c_own_address1_set(I2C1, I2C_ADDRESS_MODE_7BIT, 0x0);
-  i2c_ack_enable(I2C1, TRUE);
-  i2c_clock_stretch_enable(I2C1, TRUE);
-  i2c_general_call_enable(I2C1, FALSE);
+//  i2c_init(I2C1, I2C_FSMODE_DUTY_2_1, 100000);
+//  i2c_own_address1_set(I2C1, I2C_ADDRESS_MODE_7BIT, 0x0);
+//  i2c_ack_enable(I2C1, TRUE);
+//  i2c_clock_stretch_enable(I2C1, TRUE);
+//  i2c_general_call_enable(I2C1, FALSE);
 
-  i2c_enable(I2C1, TRUE);
+//  i2c_enable(I2C1, TRUE);
 
   /* add user code begin i2c1_init 2 */
 

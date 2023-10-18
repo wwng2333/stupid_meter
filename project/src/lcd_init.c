@@ -32,6 +32,12 @@
 //	GPIO_SetBits(GPIOE,GPIO_Pin_8|GPIO_Pin_10);
 //}
 
+void LCD_Init_Printline()
+{
+	LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
+	LCD_DrawLine(88, 2, 88, 78, WHITE);
+	LCD_DrawLine(89, 2, 89, 78, WHITE);
+}
 
 /******************************************************************************
       函数说明：LCD串行数据写入函数

@@ -36,9 +36,11 @@ extern "C" {
 #include "at32f421.h"
 #include "delay.h"
 #include "lcd.h"
+#include "I2C.h"
 #include "lcd_init.h"
 #include "SEGGER_RTT.h"
 #include "SEGGER_RTT_Conf.h"
+#include <stdio.h>
 
 /* private includes -------------------------------------------------------------*/
 /* add user code begin private includes */

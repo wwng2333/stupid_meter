@@ -379,6 +379,66 @@ void Draw_Circle(u16 x0,u16 y0,u8 r,u16 color)
 //	}
 //}
 
+void LCD_ShowChar2416(u16 x, u16 y, u8 num, u16 fc, u16 bc)
+{
+	u8 sizex, t, m = 0, sizey;
+	u16 i; // ??????????
+	u16 x0 = x;
+	sizex = 16;
+	sizey = 24;
+	// TypefaceNum=48;
+	num = num - ' ';					   // ???????
+	LCD_Address_Set(x, y, x + 15, y + 23); // ??????
+	for (i = 0; i < 48; i++)
+	{
+		for (t = 0; t < 8; t++)
+		{
+			if (ascii_2412[num][i] & (0x01 << t))
+				LCD_WR_DATA(fc);
+			else
+				LCD_WR_DATA(bc);
+			m++;
+			if ((m & (sizex - 1)) == 0)
+			{
+				m = 0;
+				break;
+			}
+		}
+	}
+}
+
+void LCD_ShowString2416(u16 x, u16 y, char *p, u16 fc, u16 bc)
+{
+	while (*p != '\0')
+	{
+		if(*p == '.') 
+		{
+			LCD_ShowCharDot(x, y, fc, bc);
+			x += 5;
+		} else {
+			LCD_ShowChar2416(x, y, *p, fc, bc);
+			x += 16;
+		}
+		p++;
+	}
+}
+
+void LCD_ShowCharDot(u16 x, u16 y, u16 fc, u16 bc)
+{
+	u8 t, m = 0;
+	u16 i; // ??????????
+	LCD_Address_Set(x, y, x + 7, y + 23); // ??????
+	for (i = 0; i < 24; i++)
+	{
+		for (t = 0; t < 8; t++)
+		{
+			if (dot[i] & (0x01 << t))
+				LCD_WR_DATA(fc);
+			else
+				LCD_WR_DATA(bc);
+		}
+	}
+}
 
 /******************************************************************************
       函数说明：显示单个字符
@@ -402,9 +462,9 @@ void LCD_ShowChar(u16 x,u16 y,u8 num,u16 fc,u16 bc,u8 sizey,u8 mode)
 	for(i=0;i<TypefaceNum;i++)
 	{ 
 		if(sizey==12)temp=ascii_1206[num][i];		       //调用6x12字体
-		else if(sizey==16)temp=ascii_1608[num][i];		 //调用8x16字体
+		//else if(sizey==16)temp=ascii_1608[num][i];		 //调用8x16字体
 		else if(sizey==24)temp=ascii_2412[num][i];		 //调用12x24字体
-		else if(sizey==32)temp=ascii_3216[num][i];		 //调用16x32字体
+		//else if(sizey==32)temp=ascii_3216[num][i];		 //调用16x32字体
 		else return;
 		for(t=0;t<8;t++)
 		{

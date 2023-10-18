@@ -37,8 +37,7 @@
 #define LCD_BLK_Clr()  gpio_bits_reset(GPIOA, GPIO_PINS_1) //PA1
 #define LCD_BLK_Set()  gpio_bits_set(GPIOA, GPIO_PINS_1)
 
-
-
+void LCD_Init_Printline();
 
 //void LCD_GPIO_Init(void);//初始化GPIO
 void LCD_Writ_Bus(u8 dat);//模拟SPI时序

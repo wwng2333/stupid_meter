@@ -67,10 +67,18 @@
   * @param  none
   * @retval none
   */
+	
 int main(void)
 {
   /* add user code begin 1 */
-
+	char Calc[12] = {0};
+	float mAh = 0.0f;
+	float mWh = 0.0f;
+	float Voltage = 0.0f;
+	float Current = 0.0f;
+	float Power = 0.0f;
+	
+	delay_init();
   /* add user code end 1 */
 
   /* system clock config. */
@@ -96,42 +104,34 @@ int main(void)
 
   /* init gpio function. */
   wk_gpio_config();
+
   /* add user code begin 2 */
-	SEGGER_RTT_printf(0, "Hello world AT32F421!\r\n");
-	delay_init();
+	INA226_Init();
 	LCD_Init();
-	LCD_Fill(0,0,LCD_W,LCD_H,BLACK);
-	
-	
+	LCD_Init_Printline();	
 // 	volatile crm_clocks_freq_type crm_clk_freq = {};
 //	crm_clocks_freq_get((crm_clocks_freq_type*)&crm_clk_freq);
-
-	float t=0;
   /* add user code end 2 */
   while(1)
   {
-		LCD_ShowString(10,20,"LCD_W:",WHITE,BLACK,16,0);
-		LCD_ShowIntNum(58,20,LCD_W,3,WHITE,BLACK,16);
-		LCD_ShowString(10,40,"LCD_H:",WHITE,BLACK,16,0);
-		LCD_ShowIntNum(58,40,LCD_H,3,WHITE,BLACK,16);
-		LCD_ShowFloatNum1(10,60,t,4,WHITE,BLACK,16);
-		t+=0.1;
     /* add user code begin 3 */
-		//LCD_ShowString(10,20,"LCD_W:",RED,WHITE,16,0);
-		//delay_ms(100);
-//		gpio_bits_set(GPIOA, GPIO_PINS_2);
-//		delay_ms(10);
-//		gpio_bits_reset(GPIOA, GPIO_PINS_2);
-//		LCD_ShowString(10,20,"LCD_W:",RED,WHITE,16,0);
+		Voltage = INA226_Read_Voltage();
+		Current = INA226_Read_Current();
+		Power = Voltage * Current;
 		
-//		spi_i2s_data_transmit(SPI1, 0xAA);
-//		while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
-//		spi_i2s_data_transmit(SPI1, 0xBB);
-//		while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
-//		spi_i2s_data_transmit(SPI1, 0xCC);
-//		while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
-//		spi_i2s_data_transmit(SPI1, 0xDD);
-//		while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
+		if(Voltage < 10) sprintf(Calc, "%.3fV", Voltage);
+		else sprintf(Calc, "%.2fdV", Voltage);
+		LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
+		
+		if(Current < 0.1) sprintf(Calc, "%.1fmA", Current * 1000);
+		else if(Current < 1) sprintf(Calc, "%.0fmA", Current * 1000);
+		else sprintf(Calc, "%.3fA", Current);
+		LCD_ShowString2416(0, 29, Calc, BLUE, BLACK);
+		
+		if(Power < 10) sprintf(Calc, "%.3fW", Power);
+		else if(Power < 100) sprintf(Calc, "%.2fW", Power);
+		else sprintf(Calc, "%.1fW", Power);
+		LCD_ShowString2416(0, 56, Calc, GBLUE, BLACK);
     /* add user code end 3 */
   }
 }
