@@ -185,6 +185,8 @@ void wk_periph_clock_config(void)
 void wk_nvic_config(void)
 {
   nvic_priority_group_config(NVIC_PRIORITY_GROUP_4);
+
+  nvic_irq_enable(EXINT1_0_IRQn, 0, 0);
 }
 
 /**
@@ -242,7 +244,14 @@ void wk_exint_config(void)
   exint_init_struct.line_select = EXINT_LINE_0;
   exint_init_struct.line_polarity = EXINT_TRIGGER_FALLING_EDGE;
   exint_init(&exint_init_struct);
-
+  
+  /**
+   * Users need to configure EXINT0 interrupt functions according to the actual application.
+   * 1. Call the below function to enable the corresponding EXINT0 interrupt.
+   *     --exint_interrupt_enable(EXINT_LINE_0, TRUE);
+   * 2. Add the user's interrupt handler code into the below function in the at32f421_int.c file.
+   *     --void EXINT1_0_IRQHandler(void)
+   */
 }
 
 /**
@@ -401,9 +410,9 @@ void wk_tmr15_init(void)
   gpio_pin_mux_config(GPIOA, GPIO_PINS_SOURCE1, GPIO_MUX_5);
 
   /* configure counter settings */
-  tmr_base_init(TMR15, 665, 0);
+  tmr_base_init(TMR15, 0, 0);
   tmr_cnt_dir_set(TMR15, TMR_COUNT_UP);
-  tmr_clock_source_div_set(TMR15, TMR_CLOCK_DIV1);
+  tmr_clock_source_div_set(TMR15, TMR_CLOCK_DIV4);
   tmr_repetition_counter_set(TMR15, 0);
   tmr_period_buffer_enable(TMR15, FALSE);
 

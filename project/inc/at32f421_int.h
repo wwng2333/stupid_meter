@@ -64,7 +64,7 @@ void UsageFault_Handler(void);
 void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
-
+void EXINT1_0_IRQHandler(void);
 /* add user code begin exported functions */
 
 /* add user code end exported functions */

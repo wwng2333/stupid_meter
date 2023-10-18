@@ -52,6 +52,7 @@
 char Calc[20] = {0};
 float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
+__IO uint8_t test = 0;
 /* add user code end private variables */
 
 /* private function prototypes --------------------------------------------*/
@@ -132,6 +133,7 @@ int main(void)
 	INA226_Init();
 	LCD_Init();	
 	LCD_Init_Printline();	
+	exint_interrupt_enable(EXINT_LINE_0, TRUE);
 // 	volatile crm_clocks_freq_type crm_clk_freq = {};
 //	crm_clocks_freq_get((crm_clocks_freq_type*)&crm_clk_freq);
   /* add user code end 2 */
@@ -151,8 +153,7 @@ int main(void)
 		LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
 		SEGGER_RTT_printf(0, "%s\r\n", Calc);
 		
-		if(Current == 0) sprintf(Calc, "%.2fmA", Current * 1000);
-		else if(Current < 0.1) sprintf(Calc, "%.1fmA", Current * 1000);
+		if(Current < 0.1) sprintf(Calc, "%.2fmA", Current * 1000);
 		else if(Current < 1) sprintf(Calc, "%.0fmA", Current * 1000);
 		else sprintf(Calc, "%.3fA", Current);
 		LCD_ShowString2416(0, 29, Calc, BLUE, BLACK);
