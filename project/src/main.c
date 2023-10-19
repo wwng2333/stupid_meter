@@ -49,7 +49,7 @@
 
 /* private variables ---------------------------------------------------------*/
 /* add user code begin private variables */
-char Calc[20] = {0};
+char Calc[32] = {0};
 float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
 __IO uint8_t EXINT_Counter = 0;
@@ -149,6 +149,7 @@ int main(void)
 		Voltage = INA226_Read_Voltage();
 		Current = INA226_Read_Current();
 		Power = Voltage * Current;
+		enqueue(&queue, Current);
 		
 		if(EXINT_Counter)
 		{
@@ -164,7 +165,7 @@ int main(void)
 			LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
 			SEGGER_RTT_printf(0, "%s\r\n", Calc);
 			
-			if(Current < 0.1) sprintf(Calc, "%.2fmA", Current * 1000);
+			if(Current < 0.1) sprintf(Calc, "%.1fmA", Current * 1000);
 			else if(Current < 1) sprintf(Calc, "%.0fmA", Current * 1000);
 			else if(Current > 10) sprintf(Calc, "%.2fA", Current);
 			else sprintf(Calc, "%.3fA", Current);
@@ -188,14 +189,13 @@ int main(void)
 			LCD_DrawLine(0, 14, SIZE, 14, GBLUE);
 			LCD_DrawLine(0, 46, SIZE, 46, GBLUE);
 			LCD_DrawLine(0, 78, SIZE, 78, GBLUE);
-			sprintf(Calc, "%.2fV %.3fA", Voltage, Current);
+			sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC", Voltage, Current, Power, temp);
 			LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
-			LCD_ShowString(SIZE+2, 70, "0", GBLUE, BLACK, 12, 0);
+			LCD_ShowString(SIZE+2, 70, "0A", GBLUE, BLACK, 12, 0);
 			sprintf(Calc, "%.2f", queue.max/2);
 			LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
 			sprintf(Calc, "%.2f", queue.max);
-			LCD_ShowString(SIZE+2, 8, Calc, GBLUE, BLACK, 12, 0);
-			enqueue(&queue, Current);
+			LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
 			printQueue(&queue);
 		}
 		delay_ms(500);

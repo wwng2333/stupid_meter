@@ -24,10 +24,11 @@ int dequeue(struct Queue* queue) {
 void printQueue(struct Queue* queue) {
     int i = queue->front;
 		uint8_t x = 0;
-		uint8_t y = 0;
+		uint8_t y0,y1 = 0;
     while (i != queue->rear) {
-			y = (uint8_t) (80-(queue->arr[i] / queue->max * 66));
-			LCD_DrawPoint(x, y, WHITE);
+			y0 = (uint8_t) (80-(queue->arr[i] / queue->max * 66));
+			y1 = (uint8_t) (80-(queue->arr[i+1] / queue->max * 66));
+			LCD_DrawLine(x,y0,x+1,y1, WHITE);
 			//SEGGER_RTT_printf(0, "max=%f ", queue->max);
 			//SEGGER_RTT_printf(0, "arr[%d]=%f", i, queue->arr[i]);
 			//SEGGER_RTT_printf(0, "x=%d, y=%d\r\n", x, y);
