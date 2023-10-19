@@ -1,3 +1,4 @@
+#include "at32f421_wk_config.h"
 #include "lcd_init.h"
 #include "lcd.h"
 #include "delay.h"

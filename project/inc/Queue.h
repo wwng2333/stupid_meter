@@ -1,9 +1,10 @@
-#ifndef __Queue_H
-#define __Queue_H
+#ifndef __QUEUE_H_
+#define __QUEUE_H_
 
 #include "at32f421_wk_config.h"
 
 #define SIZE 130
+
 
 struct Queue {
 	float arr[SIZE];
@@ -11,8 +12,10 @@ struct Queue {
 	float max;
 };
 
+float maxqueue(struct Queue* queue);
 void enqueue(struct Queue* queue, float item);
 int dequeue(struct Queue* queue);
 void printQueue(struct Queue* queue);
+void ClearPrint(void);
 
 #endif

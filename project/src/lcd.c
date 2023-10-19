@@ -1,8 +1,5 @@
-#include "lcd.h"
-#include "lcd_init.h"
+#include "at32f421_wk_config.h"
 #include "lcdfont.h"
-#include "delay.h"
-
 
 /******************************************************************************
       函数说明：在指定区域填充颜色

@@ -54,7 +54,9 @@ float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
 __IO uint8_t EXINT_Counter = 0;
 __IO uint8_t Status = 0;
+__IO uint8_t NewScreenInit = 0;
 struct Queue queue = { .front = 0, .rear = 0 , .max = 0};
+uint8_t SavedPoint[SIZE] = {0};
 /* add user code end private variables */
 
 /* private function prototypes --------------------------------------------*/
@@ -153,13 +155,18 @@ int main(void)
 		
 		if(EXINT_Counter)
 		{
-			LCD_Init_Printline();	
 			Status = ~Status;
 			EXINT_Counter = 0;
+			NewScreenInit = 1;
 		}
 		
 		if(!Status)
 		{
+			if(NewScreenInit)
+			{
+				LCD_Init_Printline();	
+				NewScreenInit = 0;
+			}
 			if(Voltage < 10) sprintf(Calc, "%.3fV", Voltage);
 			else sprintf(Calc, "%.2fV", Voltage);
 			LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
@@ -185,7 +192,11 @@ int main(void)
 		}
 		else 
 		{
-			LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
+			if(NewScreenInit)
+			{
+				LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
+				NewScreenInit = 0;
+			}
 			LCD_DrawLine(0, 14, SIZE, 14, GBLUE);
 			LCD_DrawLine(0, 46, SIZE, 46, GBLUE);
 			LCD_DrawLine(0, 78, SIZE, 78, GBLUE);
@@ -196,6 +207,7 @@ int main(void)
 			LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
 			sprintf(Calc, "%.2f", queue.max);
 			LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
+			ClearPrint();
 			printQueue(&queue);
 		}
 		delay_ms(500);
