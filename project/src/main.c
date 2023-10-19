@@ -52,7 +52,7 @@
 char Calc[20] = {0};
 float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
-__IO uint8_t test = 0;
+__IO uint8_t EXINT_Counter = 0;
 /* add user code end private variables */
 
 /* private function prototypes --------------------------------------------*/
@@ -139,6 +139,11 @@ int main(void)
   /* add user code end 2 */
   while(1)
   {
+		if(EXINT_Counter)
+		{
+			LCD_Init_Printline();	
+			EXINT_Counter = 0;
+		}
 		adc_ordinary_software_trigger_enable(ADC1, TRUE);
 		ADC1_Readtemp();
 		ADC1_ReadVCC();
@@ -155,6 +160,7 @@ int main(void)
 		
 		if(Current < 0.1) sprintf(Calc, "%.2fmA", Current * 1000);
 		else if(Current < 1) sprintf(Calc, "%.0fmA", Current * 1000);
+		else if(Current > 10) sprintf(Calc, "%.2fA", Current);
 		else sprintf(Calc, "%.3fA", Current);
 		LCD_ShowString2416(0, 29, Calc, BLUE, BLACK);
 		SEGGER_RTT_printf(0, "%s\r\n", Calc);

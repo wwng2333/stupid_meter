@@ -64,7 +64,7 @@
 
 /* external variables ---------------------------------------------------------*/
 /* add user code begin external variables */
-
+__IO extern uint8_t EXINT_Counter;
 /* add user code end external variables */
 
 /**
@@ -203,7 +203,7 @@ void PendSV_Handler(void)
 
   /* add user code end PendSV_IRQ 1 */
 }
-extern uint8_t test;
+
 /**
   * @brief  this function handles EXINT Line 1 & 0 handler.
   * @param  none
@@ -212,7 +212,7 @@ extern uint8_t test;
 void EXINT1_0_IRQHandler(void)
 {
   /* add user code begin EXINT1_0_IRQ 0 */
-	test++;
+	EXINT_Counter++;
 	exint_flag_clear(EXINT_LINE_0);
   /* add user code end EXINT1_0_IRQ 0 */
   /* add user code begin EXINT1_0_IRQ 1 */

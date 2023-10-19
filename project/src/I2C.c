@@ -8,7 +8,11 @@ float INA226_Read_Voltage(void)
 
 float INA226_Read_Current(void)
 {
-	return (float)I2C_Read_2Byte(0x04) / 50000;
+	uint16_t temp = 0;
+	temp = I2C_Read_2Byte(0x04);
+	if(temp&0x8000) temp = ~(temp - 1);
+	SEGGER_RTT_printf(0, "INA226 0x04=%d\r\n", temp);
+	return (float)temp * 0.0002;
 }
 
 float INA226_Read_Power(void)
@@ -31,13 +35,14 @@ void INA226_Init(void)
 		delay_ms(100);
 	} while(id != 0x5449);
 	I2C_Write_2Byte(0x00, 0x45FF); // Configuration Register
-	I2C_Write_2Byte(0x05, 0x0A00); // Calibration Register, 2560, 0.2mA
+	I2C_Write_2Byte(0x05, 0x0A00); // Calibration Register, 5120, 0.1mA
+	SEGGER_RTT_printf(0, "INA226 0x05=0x%x\r\n", 0x0A00);
+	//LSB=0.0002mA,R=0.01R Cal=0.00512/(0.0002*0.01)=2560=0x0A00
 }
 
 uint16_t I2C_Read_2Byte(uint8_t addr)
 {
 	uint16_t dat = 0;
-	uint8_t dat1, dat2;
 	I2C_Start();
 	I2C_SendData(INA226);
 	I2C_RecvACK();
@@ -46,13 +51,13 @@ uint16_t I2C_Read_2Byte(uint8_t addr)
 	I2C_Start();
 	I2C_SendData(INA226 + 1);
 	I2C_RecvACK();
-	dat1 = I2C_RecvData();
+	dat = I2C_RecvData();
+	dat <<= 8;
 	I2C_SendACK();
-	dat2 = I2C_RecvData();
+	dat |= I2C_RecvData();
 	I2C_SendNAK();
 	I2C_Stop();
 
-	dat = (dat1 << 8) + dat2;
 	return dat;
 }
 
