@@ -53,6 +53,8 @@ char Calc[20] = {0};
 float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
 __IO uint8_t EXINT_Counter = 0;
+__IO uint8_t Status = 0;
+struct Queue queue = { .front = 0, .rear = 0 , .max = 0};
 /* add user code end private variables */
 
 /* private function prototypes --------------------------------------------*/
@@ -139,42 +141,63 @@ int main(void)
   /* add user code end 2 */
   while(1)
   {
-		if(EXINT_Counter)
-		{
-			LCD_Init_Printline();	
-			EXINT_Counter = 0;
-		}
+    /* add user code begin 3 */
 		adc_ordinary_software_trigger_enable(ADC1, TRUE);
 		ADC1_Readtemp();
 		ADC1_ReadVCC();
 		
-    /* add user code begin 3 */
 		Voltage = INA226_Read_Voltage();
 		Current = INA226_Read_Current();
 		Power = Voltage * Current;
 		
-		if(Voltage < 10) sprintf(Calc, "%.3fV", Voltage);
-		else sprintf(Calc, "%.2fV", Voltage);
-		LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
-		SEGGER_RTT_printf(0, "%s\r\n", Calc);
+		if(EXINT_Counter)
+		{
+			LCD_Init_Printline();	
+			Status = ~Status;
+			EXINT_Counter = 0;
+		}
 		
-		if(Current < 0.1) sprintf(Calc, "%.2fmA", Current * 1000);
-		else if(Current < 1) sprintf(Calc, "%.0fmA", Current * 1000);
-		else if(Current > 10) sprintf(Calc, "%.2fA", Current);
-		else sprintf(Calc, "%.3fA", Current);
-		LCD_ShowString2416(0, 29, Calc, BLUE, BLACK);
-		SEGGER_RTT_printf(0, "%s\r\n", Calc);
-		
-		if(Power < 10) sprintf(Calc, "%.3fW", Power);
-		else if(Power < 100) sprintf(Calc, "%.2fW", Power);
-		else sprintf(Calc, "%.1fW", Power);
-		LCD_ShowString2416(0, 56, Calc, GBLUE, BLACK);
-		SEGGER_RTT_printf(0, "%s\r\n", Calc);
-		
-		sprintf(Calc, "Core:%.1fC", temp);
-		LCD_ShowString(92, 0, Calc, GBLUE, BLACK, 12, 0);
-		sprintf(Calc, "Vcc: %.2fV", vcc);
-		LCD_ShowString(92, 16, Calc, GBLUE, BLACK, 12, 0);
+		if(!Status)
+		{
+			if(Voltage < 10) sprintf(Calc, "%.3fV", Voltage);
+			else sprintf(Calc, "%.2fV", Voltage);
+			LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
+			SEGGER_RTT_printf(0, "%s\r\n", Calc);
+			
+			if(Current < 0.1) sprintf(Calc, "%.2fmA", Current * 1000);
+			else if(Current < 1) sprintf(Calc, "%.0fmA", Current * 1000);
+			else if(Current > 10) sprintf(Calc, "%.2fA", Current);
+			else sprintf(Calc, "%.3fA", Current);
+			LCD_ShowString2416(0, 29, Calc, BLUE, BLACK);
+			SEGGER_RTT_printf(0, "%s\r\n", Calc);
+			
+			if(Power < 10) sprintf(Calc, "%.3fW", Power);
+			else if(Power < 100) sprintf(Calc, "%.2fW", Power);
+			else sprintf(Calc, "%.1fW", Power);
+			LCD_ShowString2416(0, 56, Calc, GBLUE, BLACK);
+			SEGGER_RTT_printf(0, "%s\r\n", Calc);
+			
+			sprintf(Calc, "Core:%.1fC", temp);
+			LCD_ShowString(92, 0, Calc, GBLUE, BLACK, 12, 0);
+			sprintf(Calc, "Vcc: %.2fV", vcc);
+			LCD_ShowString(92, 16, Calc, GBLUE, BLACK, 12, 0);
+		}
+		else 
+		{
+			LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
+			LCD_DrawLine(0, 14, SIZE, 14, GBLUE);
+			LCD_DrawLine(0, 46, SIZE, 46, GBLUE);
+			LCD_DrawLine(0, 78, SIZE, 78, GBLUE);
+			sprintf(Calc, "%.2fV %.3fA", Voltage, Current);
+			LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
+			LCD_ShowString(SIZE+2, 70, "0", GBLUE, BLACK, 12, 0);
+			sprintf(Calc, "%.2f", queue.max/2);
+			LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
+			sprintf(Calc, "%.2f", queue.max);
+			LCD_ShowString(SIZE+2, 8, Calc, GBLUE, BLACK, 12, 0);
+			enqueue(&queue, Current);
+			printQueue(&queue);
+		}
 		delay_ms(500);
     /* add user code end 3 */
   }

@@ -43,6 +43,7 @@ extern "C" {
 #include "delay.h"
 #include "SEGGER_RTT.h"
 #include <stdio.h>
+#include "Queue.h"
 /* add user code end private includes */
 
 /* exported types -------------------------------------------------------------*/
