@@ -54,9 +54,9 @@ float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
 __IO uint8_t EXINT_Counter = 0;
 __IO uint8_t Status = 0;
-__IO uint8_t NewScreenInit = 0;
 struct Queue queue = { .front = 0, .rear = 0 , .max = 0};
 uint8_t SavedPoint[SIZE] = {0};
+uint8_t spi1_tx_buffer[1];
 /* add user code end private variables */
 
 /* private function prototypes --------------------------------------------*/
@@ -117,7 +117,12 @@ int main(void)
   wk_dma_channel_config(DMA1_CHANNEL1, (uint32_t)&ADC1->odt, (uint32_t)adc1_ordinary_valuetab, 2);
   dma_channel_enable(DMA1_CHANNEL1, TRUE);
 	adc_ordinary_software_trigger_enable(ADC1, TRUE);
-	
+
+  /* init dma1 channel3 */
+  wk_dma1_channel3_init();
+  /* config dma channel transfer parameter */
+  /* user need to modify parameters memory_base_addr and buffer_size */
+
   /* init spi1 function. */
   wk_spi1_init();
 
@@ -157,16 +162,12 @@ int main(void)
 		{
 			Status = ~Status;
 			EXINT_Counter = 0;
-			NewScreenInit = 1;
+			LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
 		}
 		
 		if(!Status)
 		{
-			if(NewScreenInit)
-			{
-				LCD_Init_Printline();	
-				NewScreenInit = 0;
-			}
+			LCD_Init_Printline();	
 			if(Voltage < 10) sprintf(Calc, "%.3fV", Voltage);
 			else sprintf(Calc, "%.2fV", Voltage);
 			LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
@@ -192,17 +193,13 @@ int main(void)
 		}
 		else 
 		{
-			if(NewScreenInit)
-			{
-				LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
-				NewScreenInit = 0;
-			}
+			//LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
 			LCD_DrawLine(0, 14, SIZE, 14, GBLUE);
 			LCD_DrawLine(0, 46, SIZE, 46, GBLUE);
 			LCD_DrawLine(0, 78, SIZE, 78, GBLUE);
-			sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC", Voltage, Current, Power, temp);
+			sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC   ", Voltage, Current, Power, temp);
 			LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
-			LCD_ShowString(SIZE+2, 70, "0A", GBLUE, BLACK, 12, 0);
+			LCD_ShowString(SIZE+2, 70, "0.0A", GBLUE, BLACK, 12, 0);
 			sprintf(Calc, "%.2f", queue.max/2);
 			LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
 			sprintf(Calc, "%.2f", queue.max);

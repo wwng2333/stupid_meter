@@ -187,6 +187,7 @@ void wk_nvic_config(void)
   nvic_priority_group_config(NVIC_PRIORITY_GROUP_4);
 
   nvic_irq_enable(EXINT1_0_IRQn, 0, 0);
+	nvic_irq_enable(DMA1_Channel3_2_IRQn, 0, 1);
 }
 
 /**
@@ -368,6 +369,7 @@ void wk_spi1_init(void)
   spi_init_struct.cs_mode_selection = SPI_CS_SOFTWARE_MODE;
   spi_init(SPI1, &spi_init_struct);
 
+	//spi_i2s_dma_transmitter_enable(SPI1, TRUE);
   /* configure the cs pin output */
   //spi_hardware_cs_output_enable(SPI1, TRUE);
 
@@ -470,6 +472,51 @@ void wk_dma1_channel1_init(void)
   dma_init_struct.priority = DMA_PRIORITY_HIGH;
   dma_init_struct.loop_mode_enable = TRUE;
   dma_init(DMA1_CHANNEL1, &dma_init_struct);
+}
+
+/**
+  * @brief  init dma1 channel3 for "spi1_tx"
+  * @param  none
+  * @retval none
+  */
+void wk_dma1_channel3_init(void)
+{
+  dma_init_type dma_init_struct;
+
+  dma_reset(DMA1_CHANNEL3);
+  dma_default_para_init(&dma_init_struct);
+  dma_init_struct.direction = DMA_DIR_MEMORY_TO_PERIPHERAL;
+  dma_init_struct.memory_data_width = DMA_MEMORY_DATA_WIDTH_BYTE;
+  dma_init_struct.memory_inc_enable = TRUE;
+  dma_init_struct.peripheral_data_width = DMA_PERIPHERAL_DATA_WIDTH_BYTE;
+  dma_init_struct.peripheral_inc_enable = FALSE;
+  dma_init_struct.priority = DMA_PRIORITY_HIGH;
+  dma_init_struct.loop_mode_enable = FALSE;
+  dma_init(DMA1_CHANNEL3, &dma_init_struct);
+	
+	dma_interrupt_enable(DMA1_CHANNEL3, DMA_FDT_INT, TRUE);
+}
+
+/**
+  * @brief  init dma1 channel3 for "spi1_tx"
+  * @param  none
+  * @retval none
+  */
+void wk_dma1_channel3_init_halfword(void)
+{
+  dma_init_type dma_init_struct;
+
+  dma_reset(DMA1_CHANNEL3);
+  dma_default_para_init(&dma_init_struct);
+  dma_init_struct.direction = DMA_DIR_MEMORY_TO_PERIPHERAL;
+  dma_init_struct.memory_data_width = DMA_MEMORY_DATA_WIDTH_HALFWORD;
+  dma_init_struct.memory_inc_enable = FALSE;
+  dma_init_struct.peripheral_data_width = DMA_PERIPHERAL_DATA_WIDTH_HALFWORD;
+  dma_init_struct.peripheral_inc_enable = FALSE;
+  dma_init_struct.priority = DMA_PRIORITY_HIGH;
+  dma_init_struct.loop_mode_enable = FALSE;
+  dma_init(DMA1_CHANNEL3, &dma_init_struct);
+	dma_interrupt_enable(DMA1_CHANNEL3, DMA_FDT_INT, TRUE);
 }
 
 /**

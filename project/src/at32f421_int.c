@@ -29,7 +29,7 @@
 
 /* private includes ----------------------------------------------------------*/
 /* add user code begin private includes */
-
+#include "at32f421_wk_config.h"
 /* add user code end private includes */
 
 /* private typedef -----------------------------------------------------------*/
@@ -218,6 +218,23 @@ void EXINT1_0_IRQHandler(void)
   /* add user code begin EXINT1_0_IRQ 1 */
 
   /* add user code end EXINT1_0_IRQ 1 */
+}
+
+/**
+  * @brief  this function handles DMA1 Channel 3 & 2 handler.
+  * @param  none
+  * @retval none
+  */
+void DMA1_Channel3_2_IRQHandler(void)
+{
+  /* add user code begin DMA1_Channel3_2_IRQ 0 */
+//	if(dma_flag_get(DMA1_FDT3_FLAG))
+	dma_flag_clear(DMA1_FDT3_FLAG);
+	dma_channel_enable(DMA1_CHANNEL3, FALSE);
+  /* add user code end DMA1_Channel3_2_IRQ 0 */
+  /* add user code begin DMA1_Channel3_2_IRQ 1 */
+
+  /* add user code end DMA1_Channel3_2_IRQ 1 */
 }
 
 /* add user code begin 1 */

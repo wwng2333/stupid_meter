@@ -9,16 +9,25 @@
       返回值：  无
 ******************************************************************************/
 void LCD_Fill(u16 xsta,u16 ysta,u16 xend,u16 yend,u16 color)
-{          
-	u16 i,j; 
+{        
+	//u16 i,j;   
+	__IO u16 color1[1];
+	u16 num;
+	color1[0]=color;
+	num=(xend-xsta)*(yend-ysta);
 	LCD_Address_Set(xsta,ysta,xend-1,yend-1);//设置显示范围
-	for(i=ysta;i<yend;i++)
-	{													   	 	
-		for(j=xsta;j<xend;j++)
-		{
-			LCD_WR_DATA(color);
-		}
-	} 					  	    
+	spi_frame_bit_num_set(SPI1, SPI_FRAME_16BIT);
+	spi_i2s_dma_transmitter_enable(SPI1, TRUE);
+	spi_enable(SPI1, TRUE);
+	LCD_CS_Clr();
+	wk_dma1_channel3_init_halfword();
+  wk_dma_channel_config(DMA1_CHANNEL3, (uint32_t)&SPI1->dt, (uint32_t)color1, num);
+  dma_channel_enable(DMA1_CHANNEL3, TRUE);
+	while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
+	LCD_CS_Set();
+	spi_frame_bit_num_set(SPI1, SPI_FRAME_8BIT);
+	spi_i2s_dma_transmitter_enable(SPI1, FALSE);
+	spi_enable(SPI1, TRUE);
 }
 
 /******************************************************************************

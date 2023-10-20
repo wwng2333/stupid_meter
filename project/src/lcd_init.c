@@ -3,40 +3,9 @@
 #include "lcd.h"
 #include "delay.h"
 
-//void LCD_GPIO_Init(void)
-//{
-//  GPIO_InitTypeDef  GPIO_InitStructure;
-//	
-//	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOB|RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOD|RCC_AHB1Periph_GPIOE|RCC_AHB1Periph_GPIOG, ENABLE);//使能PORTA~E,PORTG时钟
-// 
-//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
-//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;//普通输出模式
-//  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出
-//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100MHz
-//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//上拉
-//  GPIO_Init(GPIOG, &GPIO_InitStructure);//初始化
-//	GPIO_SetBits(GPIOG,GPIO_Pin_12);
-//	
-//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_15 ;
-//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;//普通输出模式
-//  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出
-//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100MHz
-//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//上拉
-//  GPIO_Init(GPIOD, &GPIO_InitStructure);//初始化
-//	GPIO_SetBits(GPIOD,GPIO_Pin_1|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_15);
-
-//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_10;
-//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;//普通输出模式
-//  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出
-//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100MHz
-//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//上拉
-//  GPIO_Init(GPIOE, &GPIO_InitStructure);//初始化
-//	GPIO_SetBits(GPIOE,GPIO_Pin_8|GPIO_Pin_10);
-//}
-
 void LCD_Init_Printline()
 {
-	LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
+	//LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
 	LCD_DrawLine(88, 2, 88, 78, WHITE);
 	LCD_DrawLine(89, 2, 89, 78, WHITE);
 }
