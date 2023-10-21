@@ -179,6 +179,12 @@ void wk_periph_clock_config(void)
   /* enable tmr15 periph clock */
   crm_periph_clock_enable(CRM_TMR15_PERIPH_CLOCK, TRUE);
 	
+  /* enable tmr16 periph clock */
+  crm_periph_clock_enable(CRM_TMR16_PERIPH_CLOCK, TRUE);
+
+  /* enable tmr3 periph clock */
+  crm_periph_clock_enable(CRM_TMR3_PERIPH_CLOCK, TRUE);
+	
   /* enable usart1 periph clock */
   //crm_periph_clock_enable(CRM_USART1_PERIPH_CLOCK, TRUE);
 }
@@ -192,8 +198,10 @@ void wk_nvic_config(void)
 {
   nvic_priority_group_config(NVIC_PRIORITY_GROUP_4);
 
-  nvic_irq_enable(EXINT1_0_IRQn, 0, 0);
-	nvic_irq_enable(DMA1_Channel3_2_IRQn, 0, 1);
+  nvic_irq_enable(EXINT1_0_IRQn, 4, 0);
+	nvic_irq_enable(DMA1_Channel3_2_IRQn, 1, 0);
+	nvic_irq_enable(TMR3_GLOBAL_IRQn, 3, 0);
+	nvic_irq_enable(TMR16_GLOBAL_IRQn, 2, 0);
 }
 
 /**
@@ -241,7 +249,7 @@ void wk_exint_config(void)
   gpio_default_para_init(&gpio_init_struct);
   gpio_init_struct.gpio_mode = GPIO_MODE_INPUT;
   gpio_init_struct.gpio_pins = GPIO_PINS_0;
-  gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
+  gpio_init_struct.gpio_pull = GPIO_PULL_UP;
   gpio_init(GPIOB, &gpio_init_struct);
 
   scfg_exint_line_config(SCFG_PORT_SOURCE_GPIOB, SCFG_PINS_SOURCE0);
@@ -450,6 +458,47 @@ void wk_spi2_init(void)
 }
 
 /**
+  * @brief  init tmr3 function.
+  * @param  none
+  * @retval none
+  */
+void wk_tmr3_init(void)
+{
+  /* add user code begin tmr3_init 0 */
+
+  /* add user code end tmr3_init 0 */
+
+
+  /* add user code begin tmr3_init 1 */
+
+  /* add user code end tmr3_init 1 */
+
+  /* configure counter settings */
+  tmr_base_init(TMR3, 11999, 4999);
+  tmr_cnt_dir_set(TMR3, TMR_COUNT_DOWN);
+  tmr_clock_source_div_set(TMR3, TMR_CLOCK_DIV1);
+  tmr_period_buffer_enable(TMR3, FALSE);
+
+  /* configure primary mode settings */
+  tmr_sub_sync_mode_set(TMR3, FALSE);
+  tmr_primary_mode_select(TMR3, TMR_PRIMARY_SEL_RESET);
+
+  tmr_counter_enable(TMR3, TRUE);
+	tmr_interrupt_enable(TMR3, TMR_OVF_INT, TRUE);
+  /**
+   * Users need to configure TMR3 interrupt functions according to the actual application.
+   * 1. Call the below function to enable the corresponding TMR3 interrupt.
+   *     --tmr_interrupt_enable(...)
+   * 2. Add the user's interrupt handler code into the below function in the at32f421_int.c file.
+   *     --void TMR3_GLOBAL_IRQHandler(void)
+   */
+
+  /* add user code begin tmr3_init 2 */
+
+  /* add user code end tmr3_init 2 */
+}
+
+/**
   * @brief  init tmr15 function.
   * @param  none
   * @retval none
@@ -481,7 +530,7 @@ void wk_tmr15_init(void)
   gpio_pin_mux_config(GPIOA, GPIO_PINS_SOURCE1, GPIO_MUX_5);
 
   /* configure counter settings */
-  tmr_base_init(TMR15, 0, 0);
+  tmr_base_init(TMR15, 65535, 100);
   tmr_cnt_dir_set(TMR15, TMR_COUNT_UP);
   tmr_clock_source_div_set(TMR15, TMR_CLOCK_DIV4);
   tmr_repetition_counter_set(TMR15, 0);
@@ -520,6 +569,47 @@ void wk_tmr15_init(void)
   /* add user code begin tmr15_init 2 */
 
   /* add user code end tmr15_init 2 */
+}
+
+/**
+  * @brief  init tmr16 function.
+  * @param  none
+  * @retval none
+  */
+void wk_tmr16_init(void)
+{
+  /* add user code begin tmr16_init 0 */
+
+  /* add user code end tmr16_init 0 */
+
+
+  /* add user code begin tmr16_init 1 */
+
+  /* add user code end tmr16_init 1 */
+
+  /* configure counter settings */
+  tmr_base_init(TMR16, 5000, 11999);
+  tmr_cnt_dir_set(TMR16, TMR_COUNT_DOWN);
+  tmr_clock_source_div_set(TMR16, TMR_CLOCK_DIV1);
+  tmr_repetition_counter_set(TMR16, 0);
+  tmr_period_buffer_enable(TMR16, FALSE);
+
+  /* configure overflow event */
+  tmr_overflow_request_source_set(TMR16, TRUE);
+
+  tmr_counter_enable(TMR16, TRUE);
+	tmr_interrupt_enable(TMR16, TMR_OVF_INT, TRUE);
+  /**
+   * Users need to configure TMR16 interrupt functions according to the actual application.
+   * 1. Call the below function to enable the corresponding TMR16 interrupt.
+   *     --tmr_interrupt_enable(...)
+   * 2. Add the user's interrupt handler code into the below function in the at32f421_int.c file.
+   *     --void TMR16_GLOBAL_IRQHandler(void)
+   */
+
+  /* add user code begin tmr16_init 2 */
+
+  /* add user code end tmr16_init 2 */
 }
 
 /**

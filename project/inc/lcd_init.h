@@ -3,17 +3,16 @@
 
 #include "at32f421_wk_config.h"
 
-#define USE_HORIZONTAL 3  //设置横屏或者竖屏显示 0或1为竖屏 2或3为横屏
+extern __IO uint8_t USE_HORIZONTAL;  //设置横屏或者竖屏显示 0或1为竖屏 2或3为横屏
 
+//#if USE_HORIZONTAL==0||USE_HORIZONTAL==1
+//#define LCD_W 80
+//#define LCD_H 160
 
-#if USE_HORIZONTAL==0||USE_HORIZONTAL==1
-#define LCD_W 80
-#define LCD_H 160
-
-#else
+//#else
 #define LCD_W 160
 #define LCD_H 80
-#endif
+//#endif
 
 
 
@@ -37,9 +36,6 @@
 #define LCD_BLK_Clr()  gpio_bits_reset(GPIOA, GPIO_PINS_1) //PA1
 #define LCD_BLK_Set()  gpio_bits_set(GPIOA, GPIO_PINS_1)
 
-void LCD_Init_Printline();
-
-//void LCD_GPIO_Init(void);//初始化GPIO
 void LCD_Writ_Bus(u8 dat);//模拟SPI时序
 void LCD_WR_DATA8(u8 dat);//写入一个字节
 void LCD_WR_DATA(u16 dat);//写入两个字节

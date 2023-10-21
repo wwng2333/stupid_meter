@@ -67,6 +67,8 @@ void PendSV_Handler(void);
 
 void EXINT1_0_IRQHandler(void);
 void DMA1_Channel3_2_IRQHandler(void);
+void TMR3_GLOBAL_IRQHandler(void);
+void TMR16_GLOBAL_IRQHandler(void);
 void USART1_IRQHandler(void);
 /* add user code begin exported functions */
 

@@ -439,6 +439,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\w25qxx.c</FilePath>
             </File>
+            <File>
+              <FileName>TMR3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\TMR3.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

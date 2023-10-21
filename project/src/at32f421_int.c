@@ -49,7 +49,7 @@
 
 /* private variables ---------------------------------------------------------*/
 /* add user code begin private variables */
-
+extern __IO uint16_t key_state;
 /* add user code end private variables */
 
 /* private function prototypes --------------------------------------------*/
@@ -211,8 +211,12 @@ void PendSV_Handler(void)
   */
 void EXINT1_0_IRQHandler(void)
 {
+	SEGGER_RTT_printf(0, "EXINT1 IRQ\r\n");
   /* add user code begin EXINT1_0_IRQ 0 */
-	EXINT_Counter++;
+	if((key_state & 0x8000) == 0)
+	{
+		key_state |= 0x4000;
+	}
 	exint_flag_clear(EXINT_LINE_0);
   /* add user code end EXINT1_0_IRQ 0 */
   /* add user code begin EXINT1_0_IRQ 1 */
@@ -241,6 +245,66 @@ void DMA1_Channel3_2_IRQHandler(void)
   /* add user code begin DMA1_Channel3_2_IRQ 1 */
 
   /* add user code end DMA1_Channel3_2_IRQ 1 */
+}
+
+/**
+  * @brief  this function handles TMR3 handler.
+  * @param  none
+  * @retval none
+  */
+void TMR3_GLOBAL_IRQHandler(void)
+{
+	SEGGER_RTT_printf(0, "TMR3 IRQ\r\n");
+  /* add user code begin TMR3_GLOBAL_IRQ 0 */
+	TMR3_Stop();
+	if(key_state & 0x0200) //700ms delay
+	{
+		if(gpio_input_data_bit_read(GPIOB, GPIO_PINS_0) == RESET)
+		{
+			key_state = 0x8003;
+		}
+		else
+		{
+			key_state = 0x8000;
+		}
+	}
+	else //300ms delay
+	{
+		if(gpio_input_data_bit_read(GPIOB, GPIO_PINS_0) == RESET)
+		{
+			key_state |= 0x2000; //700ms delay flag
+			TMR3_Start(70000); //Start 700ms timer
+		}
+		else
+		{
+			if((key_state & 0x1FFF) == 1) key_state = 0x8001;
+			else if((key_state & 0x1FFF) == 2) key_state = 0x8002;
+			//else if((key_state & 0x1FFF) > 2) key_state = 0x8003;
+			else key_state = 0;
+		}
+	}
+  /* add user code end TMR3_GLOBAL_IRQ 0 */
+  /* add user code begin TMR3_GLOBAL_IRQ 1 */
+
+  /* add user code end TMR3_GLOBAL_IRQ 1 */
+}
+
+extern __IO uint8_t TMR16_Main_Counter;
+/**
+  * @brief  this function handles TMR16 handler.
+  * @param  none
+  * @retval none
+  */
+void TMR16_GLOBAL_IRQHandler(void)
+{
+  /* add user code begin TMR16_GLOBAL_IRQ 0 */
+	//SEGGER_RTT_printf(0, "TMR16 IRQ\r\n");
+	tmr_flag_clear(TMR16, TMR_OVF_FLAG);
+	TMR16_Main_Counter++;
+  /* add user code end TMR16_GLOBAL_IRQ 0 */
+  /* add user code begin TMR16_GLOBAL_IRQ 1 */
+
+  /* add user code end TMR16_GLOBAL_IRQ 1 */
 }
 
 //extern uint8_t usart1_rx_buffer[64];

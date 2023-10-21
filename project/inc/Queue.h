@@ -11,6 +11,10 @@ struct Queue {
 	float max, min, avg;
 };
 
+struct PowerStatusNow {
+	float Voltage, Current, Power;
+};
+
 void Countqueue(struct Queue* queue);
 void enqueue(struct Queue* queue, float item);
 int dequeue(struct Queue* queue);

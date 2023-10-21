@@ -45,6 +45,7 @@ extern "C" {
 #include <stdio.h>
 #include "Queue.h"
 #include "w25qxx.h"
+#include "TMR3.h"
 /* add user code end private includes */
 
 /* exported types -------------------------------------------------------------*/
@@ -100,8 +101,14 @@ extern "C" {
   /* user need to modify parameters memory_base_addr and buffer_size */
   void wk_dma_channel_config(dma_channel_type* dmax_channely, uint32_t peripheral_base_addr, uint32_t memory_base_addr, uint16_t buffer_size);
 
+  /* init tmr3 function. */
+  void wk_tmr3_init(void);
+	
 	/* init tmr15 function. */
   void wk_tmr15_init(void);
+	
+  /* init tmr16 function. */
+  void wk_tmr16_init(void);
 	
   /* init usart1 function. */
   void wk_usart1_init(void);
