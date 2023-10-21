@@ -10,8 +10,9 @@ float INA226_Read_Current(void)
 {
 	uint16_t temp = 0;
 	temp = I2C_Read_2Byte(0x04);
-	if(temp&0x8000) temp = ~(temp - 1);
-	//SEGGER_RTT_printf(0, "INA226 0x04=%d\r\n", temp);
+	if (temp & 0x8000)
+		temp = ~(temp - 1);
+	// SEGGER_RTT_printf(0, "INA226 0x04=%d\r\n", temp);
 	return (float)temp * 0.0002;
 }
 
@@ -21,23 +22,24 @@ float INA226_Read_Power(void)
 }
 
 /**
-  * @brief Read INA226 ID, Set Configuration 
-	* Register and Calibration Register
-  * @param  none
-  * @retval none
-  */
+ * @brief Read INA226 ID, Set Configuration
+ * Register and Calibration Register
+ * @param  none
+ * @retval none
+ */
 void INA226_Init(void)
 {
 	uint16_t id = 0;
 	SEGGER_RTT_SetTerminal(1);
-	do {
+	do
+	{
 		id = I2C_Read_2Byte(0xFE);
 		SEGGER_RTT_printf(0, "INA226 0xFE=0x%x\r\n", id);
 		delay_ms(100);
-	} while(id != 0x5449);
+	} while (id != 0x5449);
 	I2C_Write_2Byte(0x00, 0x45FF); // Configuration Register
 	I2C_Write_2Byte(0x05, 0x0A00); // Calibration Register, 5120, 0.1mA
-	//LSB=0.0002mA,R=0.01R Cal=0.00512/(0.0002*0.01)=2560=0x0A00
+	// LSB=0.0002mA,R=0.01R Cal=0.00512/(0.0002*0.01)=2560=0x0A00
 	SEGGER_RTT_printf(0, "INA226 0x05=0x%x\r\n", 0x0A00);
 	SEGGER_RTT_SetTerminal(0);
 }
