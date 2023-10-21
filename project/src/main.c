@@ -62,6 +62,9 @@ struct Queue Voltage_queue = { .front = 0, .rear = 0};
 struct Queue Current_queue = { .front = 0, .rear = 0};
 struct Queue Power_queue = { .front = 0, .rear = 0};
 uint8_t SavedPoint[SIZE] = {0};
+float Voltage = 0.0f;
+float Current = 0.0f;
+float Power = 0.0f;
 //uint8_t spi1_tx_buffer[1];
 /* add user code end private variables */
 
@@ -89,13 +92,33 @@ void ADC1_Readtemp(void)
 }
 /* add user code end 0 */
 
-void LCD_ChartInit(void)
+void LCD_ChartPrint(char flag, char unit, struct Queue* queue)
 {
 	LCD_DrawLine(0, 14, SIZE, 14, GBLUE);
 	LCD_DrawLine(0, 46, SIZE, 46, GBLUE);
 	LCD_DrawLine(0, 78, SIZE, 78, GBLUE);
+	sprintf(Calc, "%.1fV %.2fA %.2fW %.1fC   ", Voltage, Current, Power, temp);
+	LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
+	LCD_ShowChar(150, 1, flag, GBLUE, BLACK, 12, 0);
+	sprintf(Calc, "0.0%c", unit);
+	LCD_ShowString(SIZE+2, 70, Calc, GBLUE, BLACK, 12, 0);
+	if(queue->max > 10) 
+	{
+		sprintf(Calc, "%.0f", queue->max/2);
+		LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
+		sprintf(Calc, "%.0f", queue->max);
+		LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
+	}
+	else 
+	{
+		sprintf(Calc, "%.2f", queue->max/2);
+		LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
+		sprintf(Calc, "%.2f", queue->max);
+		LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
+	}
+	ClearPrint();
+	printQueue(queue);
 }
-
 /**
   * @brief main function.
   * @param  none
@@ -106,9 +129,6 @@ int main(void)
   /* add user code begin 1 */
 	float mAh = 0.0f;
 	float mWh = 0.0f;
-	float Voltage = 0.0f;
-	float Current = 0.0f;
-	float Power = 0.0f;
 	
 	delay_init();
   /* add user code end 1 */
@@ -246,59 +266,18 @@ int main(void)
 				else sprintf(Calc, "%.1fmWh", mWh);
 				LCD_ShowString(96, 50, Calc, GBLUE, BLACK, 12, 0);
 				LCD_ShowString(96, 62, "<------", GBLUE, BLACK, 16, 0);
-				delay_ms(500);
 			break;
 			
 			case 1:
-				LCD_ChartInit();
-				sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC   V", Voltage, Current, Power, temp);
-				LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
-				LCD_ShowString(SIZE+2, 70, "0.0V", GBLUE, BLACK, 12, 0);
-				sprintf(Calc, "%.2f", Voltage_queue.max/2);
-				LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
-				sprintf(Calc, "%.2f", Voltage_queue.max);
-				LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
-				ClearPrint();
-				printQueue(&Voltage_queue);
-				delay_ms(500);
+				LCD_ChartPrint('V', 'V', &Voltage_queue);
 			break;
 			
 			case 2:
-				LCD_ChartInit();
-				sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC   A", Voltage, Current, Power, temp);
-				LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
-				LCD_ShowString(SIZE+2, 70, "0.0A", GBLUE, BLACK, 12, 0);
-				sprintf(Calc, "%.2f", Current_queue.max/2);
-				LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
-				sprintf(Calc, "%.2f", Current_queue.max);
-				LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
-				ClearPrint();
-				printQueue(&Current_queue);
-				delay_ms(500);
+				LCD_ChartPrint('A', 'A', &Current_queue);
 			break;
 			
 			case 3:
-				LCD_ChartInit();
-				sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC   P", Voltage, Current, Power, temp);
-				LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
-				LCD_ShowString(SIZE+2, 70, "0.0W", GBLUE, BLACK, 12, 0);
-				if(Power_queue.max > 10) 
-				{
-					sprintf(Calc, "%.0f", Power_queue.max/2);
-					LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
-					sprintf(Calc, "%.0f", Power_queue.max);
-					LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
-				}
-				else 
-				{
-					sprintf(Calc, "%.2f", Power_queue.max/2);
-					LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
-					sprintf(Calc, "%.2f", Power_queue.max);
-					LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
-				}
-				ClearPrint();
-				printQueue(&Power_queue);
-				delay_ms(500);
+				LCD_ChartPrint('P', 'W', &Power_queue);
 			break;
 			
 			case 4:
@@ -313,9 +292,9 @@ int main(void)
 				sprintf(Calc, "%s %.2f %.2f %.2f", "W", Power_queue.max, Power_queue.avg, Power_queue.min);
 				LCD_ShowString(1, 62, Calc, GBLUE, BLACK, 16, 0);
 
-				delay_ms(500);
 			break;
 		}
+		delay_ms(500);
     /* add user code end 3 */
   }
 }
