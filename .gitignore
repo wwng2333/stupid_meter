@@ -20,3 +20,7 @@ project\MDK_V5\listings\*
 *.uvopt
 *.uvgui.Administrator
 
+project/MDK_V5/AT32F421+INA226.uvguix.Administrator
+project/MDK_V5/AT32F421+INA226.uvoptx
+project/MDK_V5/objects/StupidMeterB.hex_1.bin
+project/MDK_V5/listings/StupidMeterB.map
