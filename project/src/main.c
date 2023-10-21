@@ -49,6 +49,9 @@
 
 /* private variables ---------------------------------------------------------*/
 /* add user code begin private variables */
+const uint8_t TEXT_Buffer[64]={"Crazy AT32F421G8U7 W25Q32 SPI TEST!"};
+uint8_t datatemp[64];
+
 char Calc[32] = {0};
 float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
@@ -56,7 +59,7 @@ __IO uint8_t EXINT_Counter = 0;
 __IO uint8_t Status = 0;
 struct Queue queue = { .front = 0, .rear = 0 , .max = 0};
 uint8_t SavedPoint[SIZE] = {0};
-uint8_t spi1_tx_buffer[1];
+//uint8_t spi1_tx_buffer[1];
 /* add user code end private variables */
 
 /* private function prototypes --------------------------------------------*/
@@ -68,7 +71,7 @@ uint8_t spi1_tx_buffer[1];
 /* add user code begin 0 */
 void ADC1_ReadVCC(void)
 {
-	vcc = ((double)1.2 * 4095) / adc1_ordinary_valuetab[1];
+	vcc = ((float)1.2 * 4095) / adc1_ordinary_valuetab[1];
 	sprintf(Calc, "ADC VCC = %.2f", vcc);
 	SEGGER_RTT_printf(0, "%s\r\n", Calc);
 }
@@ -76,7 +79,7 @@ void ADC1_ReadVCC(void)
 void ADC1_Readtemp(void)
 {
 	float tmp = 0.0f;
-	tmp = (ADC_TEMP_BASE - (double)adc1_ordinary_valuetab[0] * vcc / 4096) / ADC_TEMP_SLOPE + 25;
+	tmp = (ADC_TEMP_BASE - (float)adc1_ordinary_valuetab[0] * vcc / 4096) / ADC_TEMP_SLOPE + 25;
 	if(tmp > 0) temp = tmp;
 	sprintf(Calc, "ADC Temp = %.2f", temp);
 	SEGGER_RTT_printf(0, "%s\r\n", Calc);
@@ -125,7 +128,10 @@ int main(void)
 
   /* init spi1 function. */
   wk_spi1_init();
-
+	
+  /* init spi2 function. */
+  wk_spi2_init();
+	
   /* init adc1 function. */
   wk_adc1_init();
 
@@ -134,6 +140,14 @@ int main(void)
 
   /* init gpio function. */
   wk_gpio_config();
+	while(W25Q_ReadReg(W25X_ManufactDeviceID) != W25Q32)
+	{
+		SEGGER_RTT_printf(0, "W25Q32 Check Failed!");
+	}
+	W25Q_Write((uint8_t*)TEXT_Buffer, 0x1000, 64);
+	SEGGER_RTT_printf(0, "W25Q32 write finish!");
+	//W25Q_EraseChip();
+	W25Q_Read(datatemp, 0x1000, 64);
 
   /* init tmr15 function. */
   wk_tmr15_init();
@@ -141,8 +155,8 @@ int main(void)
   /* add user code begin 2 */
 	INA226_Init();
 	LCD_Init();	
-	LCD_Init_Printline();	
-	exint_interrupt_enable(EXINT_LINE_0, TRUE);
+	//LCD_Init_Printline();	
+	LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
 // 	volatile crm_clocks_freq_type crm_clk_freq = {};
 //	crm_clocks_freq_get((crm_clocks_freq_type*)&crm_clk_freq);
   /* add user code end 2 */
@@ -167,7 +181,8 @@ int main(void)
 		
 		if(!Status)
 		{
-			LCD_Init_Printline();	
+			LCD_DrawLine(88, 2, 88, 78, WHITE);
+			LCD_DrawLine(89, 2, 89, 78, WHITE);
 			if(Voltage < 10) sprintf(Calc, "%.3fV", Voltage);
 			else sprintf(Calc, "%.2fV", Voltage);
 			LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
@@ -193,7 +208,6 @@ int main(void)
 		}
 		else 
 		{
-			//LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
 			LCD_DrawLine(0, 14, SIZE, 14, GBLUE);
 			LCD_DrawLine(0, 46, SIZE, 46, GBLUE);
 			LCD_DrawLine(0, 78, SIZE, 78, GBLUE);

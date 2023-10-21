@@ -24,7 +24,6 @@ void LCD_Fill(u16 xsta,u16 ysta,u16 xend,u16 yend,u16 color)
   wk_dma_channel_config(DMA1_CHANNEL3, (uint32_t)&SPI1->dt, (uint32_t)color1, num);
   dma_channel_enable(DMA1_CHANNEL3, TRUE);
 	while (spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG));
-	LCD_CS_Set();
 	spi_frame_bit_num_set(SPI1, SPI_FRAME_8BIT);
 	spi_i2s_dma_transmitter_enable(SPI1, FALSE);
 	spi_enable(SPI1, TRUE);

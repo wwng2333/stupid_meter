@@ -44,6 +44,7 @@ extern "C" {
 #include "SEGGER_RTT.h"
 #include <stdio.h>
 #include "Queue.h"
+#include "w25qxx.h"
 /* add user code end private includes */
 
 /* exported types -------------------------------------------------------------*/
@@ -84,7 +85,10 @@ extern "C" {
 
   /* init spi1 function. */
   void wk_spi1_init(void);
-
+	
+  /* init spi2 function. */
+  void wk_spi2_init(void);
+	
   /* init dma1 channel1 */
   void wk_dma1_channel1_init(void);
 	

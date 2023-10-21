@@ -228,9 +228,15 @@ void EXINT1_0_IRQHandler(void)
 void DMA1_Channel3_2_IRQHandler(void)
 {
   /* add user code begin DMA1_Channel3_2_IRQ 0 */
-//	if(dma_flag_get(DMA1_FDT3_FLAG))
-	dma_flag_clear(DMA1_FDT3_FLAG);
-	dma_channel_enable(DMA1_CHANNEL3, FALSE);
+	if(dma_flag_get(DMA1_FDT3_FLAG) == SET)
+	{
+		dma_channel_enable(DMA1_CHANNEL3, FALSE);
+		while (spi_i2s_flag_get(SPI1, SPI_I2S_TDBE_FLAG) == RESET || 
+			spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG) == SET);
+		LCD_CS_Set();
+		dma_flag_clear(DMA1_FDT3_FLAG);
+	}
+	
   /* add user code end DMA1_Channel3_2_IRQ 0 */
   /* add user code begin DMA1_Channel3_2_IRQ 1 */
 
