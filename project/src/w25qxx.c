@@ -12,7 +12,7 @@ void W25Q_Write(uint8_t* pBuffer, uint32_t addr, uint16_t size)
 	sec_pos = addr / 4096;
 	sec_offset = addr % 4096;
 	sec_remain = 4096 - sec_offset;
-	SEGGER_RTT_printf(0, "Write addr: 0x%x, size, 0x%x\r\n", addr, size);
+	SEGGER_RTT_printf(0, "Write 1st addr: 0x%x, size: %d\r\n", addr, size);
 	if(size < sec_remain) sec_remain = size;
 	while(1)
 	{
@@ -55,6 +55,7 @@ void W25Q_Write(uint8_t* pBuffer, uint32_t addr, uint16_t size)
 			}
 		}
 	}
+	SEGGER_RTT_printf(0, "W25Q32 write finish!\r\n");
 }
 
 void W25Q_NoCheckWrite(uint8_t* pBuffer, uint32_t addr, uint16_t size)

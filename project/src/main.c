@@ -51,7 +51,8 @@
 /* add user code begin private variables */
 const uint8_t TEXT_Buffer[64]={"Crazy AT32F421G8U7 W25Q32 SPI TEST!"};
 uint8_t datatemp[64];
-
+uint8_t usart1_rx_buffer[64];
+volatile uint8_t usart1_rx_counter = 0x00;
 char Calc[32] = {0};
 float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
@@ -126,6 +127,10 @@ int main(void)
   /* config dma channel transfer parameter */
   /* user need to modify parameters memory_base_addr and buffer_size */
 
+  /* init usart1 function. */
+  //wk_usart1_init();
+	//usart_interrupt_enable(USART1, USART_RDBF_INT, TRUE);
+
   /* init spi1 function. */
   wk_spi1_init();
 	
@@ -142,12 +147,13 @@ int main(void)
   wk_gpio_config();
 	while(W25Q_ReadReg(W25X_ManufactDeviceID) != W25Q32)
 	{
-		SEGGER_RTT_printf(0, "W25Q32 Check Failed!");
+		SEGGER_RTT_printf(0, "W25Q32 Check Failed!\r\n");
 	}
-	W25Q_Write((uint8_t*)TEXT_Buffer, 0x1000, 64);
-	SEGGER_RTT_printf(0, "W25Q32 write finish!");
+	//W25Q_Write((uint8_t*)TEXT_Buffer, 0x1000, 64);
 	//W25Q_EraseChip();
-	W25Q_Read(datatemp, 0x1000, 64);
+	W25Q_Read(datatemp, 0x0, 64);
+	W25Q_Read(datatemp, 0x40, 64);
+	W25Q_Read(datatemp, 0x80, 64);
 
   /* init tmr15 function. */
   wk_tmr15_init();
@@ -160,8 +166,23 @@ int main(void)
 // 	volatile crm_clocks_freq_type crm_clk_freq = {};
 //	crm_clocks_freq_get((crm_clocks_freq_type*)&crm_clk_freq);
   /* add user code end 2 */
+	//int a, i=0, count=0;
   while(1)
   {
+//    if ((a = SEGGER_RTT_WaitKey()) > 0) 
+//    {
+//			SEGGER_RTT_printf(0, "%c", a);
+//			datatemp[i] = a;
+//			i++;
+//    }
+//		if(i == sizeof(datatemp))
+//		{
+//			SEGGER_RTT_printf(0, "\r\n");
+//			i = 0;
+//			W25Q_Write((uint8_t*)datatemp, count*64, 64);
+//			count++;
+//		}
+		
     /* add user code begin 3 */
 		adc_ordinary_software_trigger_enable(ADC1, TRUE);
 		ADC1_Readtemp();
@@ -171,6 +192,8 @@ int main(void)
 		Current = INA226_Read_Current();
 		Power = Voltage * Current;
 		enqueue(&queue, Current);
+		mAh += 0.5 * (float)Current / 3.6;
+		mWh += 0.5 * (float)Power / 3.6;
 		
 		if(EXINT_Counter)
 		{
@@ -201,10 +224,16 @@ int main(void)
 			LCD_ShowString2416(0, 56, Calc, GBLUE, BLACK);
 			SEGGER_RTT_printf(0, "%s\r\n", Calc);
 			
-			sprintf(Calc, "Core:%.1fC", temp);
-			LCD_ShowString(92, 0, Calc, GBLUE, BLACK, 12, 0);
-			sprintf(Calc, "Vcc: %.2fV", vcc);
-			LCD_ShowString(92, 16, Calc, GBLUE, BLACK, 12, 0);
+			sprintf(Calc, "MCU:%.1fC", temp);
+			LCD_ShowString(96, 2, Calc, GBLUE, BLACK, 12, 0);
+			sprintf(Calc, "Vcc:%.2fV", vcc);
+			LCD_ShowString(96, 18, Calc, GBLUE, BLACK, 12, 0);
+			sprintf(Calc, "%.2fmAh", mAh);
+			LCD_ShowString(96, 34, Calc, GBLUE, BLACK, 12, 0);
+			if(mWh < 10000) sprintf(Calc, "%.2fmWh", mWh);
+			else sprintf(Calc, "%.1fmWh", mWh);
+			LCD_ShowString(96, 50, Calc, GBLUE, BLACK, 12, 0);
+			LCD_ShowString(96, 62, "<------", GBLUE, BLACK, 16, 0);
 		}
 		else 
 		{

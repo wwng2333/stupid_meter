@@ -67,6 +67,7 @@ void PendSV_Handler(void);
 
 void EXINT1_0_IRQHandler(void);
 void DMA1_Channel3_2_IRQHandler(void);
+void USART1_IRQHandler(void);
 /* add user code begin exported functions */
 
 /* add user code end exported functions */

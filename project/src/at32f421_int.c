@@ -243,6 +243,40 @@ void DMA1_Channel3_2_IRQHandler(void)
   /* add user code end DMA1_Channel3_2_IRQ 1 */
 }
 
+//extern uint8_t usart1_rx_buffer[64];
+//extern volatile uint8_t usart1_rx_counter;
+/**
+  * @brief  this function handles usart1 handler.
+  * @param  none
+  * @retval none
+  */
+//void USART1_IRQHandler(void)
+//{
+//  if(USART1->ctrl1_bit.rdbfien != RESET)
+//  {
+//    if(usart_flag_get(USART1, USART_RDBF_FLAG) != RESET)
+//    {
+//      /* read one byte from the receive data register */
+//      usart1_rx_buffer[usart1_rx_counter++] = usart_data_receive(USART1);
+
+////      if(usart1_rx_counter == usart2_tx_buffer_size)
+////      {
+////        /* disable the usart1 receive interrupt */
+////        usart_interrupt_enable(USART1, USART_RDBF_INT, FALSE);
+////      }
+//    }
+//  }
+//  
+////  if(USART1->ctrl1_bit.tdbeien != RESET)
+////  {
+////    if(usart_flag_get(USART1, USART_TDBE_FLAG) != RESET)
+////    {
+////      /* write one byte to the transmit data register */
+////      usart_data_transmit(USART1, usart1_tx_buffer[usart1_tx_counter++]);
+////    }
+////  }
+//}
+
 /* add user code begin 1 */
 
 /* add user code end 1 */

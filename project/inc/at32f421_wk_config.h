@@ -100,8 +100,11 @@ extern "C" {
   /* user need to modify parameters memory_base_addr and buffer_size */
   void wk_dma_channel_config(dma_channel_type* dmax_channely, uint32_t peripheral_base_addr, uint32_t memory_base_addr, uint16_t buffer_size);
 
-/* init tmr15 function. */
+	/* init tmr15 function. */
   void wk_tmr15_init(void);
+	
+  /* init usart1 function. */
+  void wk_usart1_init(void);
 /* add user code begin exported functions */
 
 /* add user code end exported functions */
