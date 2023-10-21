@@ -4,20 +4,24 @@
 
 extern uint8_t SavedPoint[SIZE];
 
-float maxqueue(struct Queue* queue)
+void Countqueue(struct Queue* queue)
 {
-	float max = 0.0f;
+	float max = 0.0f, min = 10000.0f, avg = 0.0f;
 	int i = queue->front;
 	while (i != queue->rear) {
 		if(queue->arr[i] > max) max = queue->arr[i];
+		else if(queue->arr[i] < min) min = queue->arr[i];
+		avg += queue->arr[i];
 		i = (i + 1) % SIZE;
 	}
-	return max;
+	queue->max = max;
+	queue->min = min;
+	queue->avg = avg / SIZE;
 }
 
 void enqueue(struct Queue* queue, float item) {
 	//SEGGER_RTT_printf(0, "enqueue=%f\n", item);
-	queue->max = maxqueue(queue);
+	Countqueue(queue);
 	if ((queue->rear + 1) % SIZE == queue->front) {
 		queue->front = (queue->front + 1) % SIZE;
 	}

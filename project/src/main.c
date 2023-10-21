@@ -58,7 +58,9 @@ float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
 __IO uint8_t EXINT_Counter = 0;
 __IO uint8_t Status = 0;
-struct Queue queue = { .front = 0, .rear = 0 , .max = 0};
+struct Queue Voltage_queue = { .front = 0, .rear = 0};
+struct Queue Current_queue = { .front = 0, .rear = 0};
+struct Queue Power_queue = { .front = 0, .rear = 0};
 uint8_t SavedPoint[SIZE] = {0};
 //uint8_t spi1_tx_buffer[1];
 /* add user code end private variables */
@@ -87,12 +89,18 @@ void ADC1_Readtemp(void)
 }
 /* add user code end 0 */
 
+void LCD_ChartInit(void)
+{
+	LCD_DrawLine(0, 14, SIZE, 14, GBLUE);
+	LCD_DrawLine(0, 46, SIZE, 46, GBLUE);
+	LCD_DrawLine(0, 78, SIZE, 78, GBLUE);
+}
+
 /**
   * @brief main function.
   * @param  none
   * @retval none
   */
-	
 int main(void)
 {
   /* add user code begin 1 */
@@ -191,66 +199,123 @@ int main(void)
 		Voltage = INA226_Read_Voltage();
 		Current = INA226_Read_Current();
 		Power = Voltage * Current;
-		enqueue(&queue, Current);
-		mAh += 0.5 * (float)Current / 3.6;
-		mWh += 0.5 * (float)Power / 3.6;
+		enqueue(&Voltage_queue, Voltage);
+		enqueue(&Current_queue, Current);
+		enqueue(&Power_queue, Power);
+		mAh += 0.5 * Current / 3.6;
+		mWh += 0.5 * Power / 3.6;
 		
 		if(EXINT_Counter)
 		{
-			Status = ~Status;
+			if(Status < 4) Status++;
+			else Status = 0;
 			EXINT_Counter = 0;
 			LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
 		}
 		
-		if(!Status)
+		switch(Status)
 		{
-			LCD_DrawLine(88, 2, 88, 78, WHITE);
-			LCD_DrawLine(89, 2, 89, 78, WHITE);
-			if(Voltage < 10) sprintf(Calc, "%.3fV", Voltage);
-			else sprintf(Calc, "%.2fV", Voltage);
-			LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
-			SEGGER_RTT_printf(0, "%s\r\n", Calc);
+			case 0: 
+				LCD_DrawLine(88, 2, 88, 78, WHITE);
+				LCD_DrawLine(89, 2, 89, 78, WHITE);
+				if(Voltage < 10) sprintf(Calc, "%.3fV", Voltage);
+				else sprintf(Calc, "%.2fV", Voltage);
+				LCD_ShowString2416(0, 2, Calc, LIGHTBLUE, BLACK);
+				SEGGER_RTT_printf(0, "%s\r\n", Calc);
+				
+				if(Current < 0.1) sprintf(Calc, "%.1fmA", Current * 1000);
+				else if(Current < 1) sprintf(Calc, "%.0fmA", Current * 1000);
+				else if(Current > 10) sprintf(Calc, "%.2fA", Current);
+				else sprintf(Calc, "%.3fA", Current);
+				LCD_ShowString2416(0, 29, Calc, BLUE, BLACK);
+				SEGGER_RTT_printf(0, "%s\r\n", Calc);
+				
+				if(Power < 10) sprintf(Calc, "%.3fW", Power);
+				else if(Power < 100) sprintf(Calc, "%.2fW", Power);
+				else sprintf(Calc, "%.1fW", Power);
+				LCD_ShowString2416(0, 56, Calc, GBLUE, BLACK);
+				SEGGER_RTT_printf(0, "%s\r\n", Calc);
+				
+				sprintf(Calc, "MCU:%.1fC", temp);
+				LCD_ShowString(96, 2, Calc, GBLUE, BLACK, 12, 0);
+				sprintf(Calc, "Vcc:%.2fV", vcc);
+				LCD_ShowString(96, 18, Calc, GBLUE, BLACK, 12, 0);
+				sprintf(Calc, "%.2fmAh", mAh);
+				LCD_ShowString(96, 34, Calc, GBLUE, BLACK, 12, 0);
+				if(mWh < 10000) sprintf(Calc, "%.2fmWh", mWh);
+				else sprintf(Calc, "%.1fmWh", mWh);
+				LCD_ShowString(96, 50, Calc, GBLUE, BLACK, 12, 0);
+				LCD_ShowString(96, 62, "<------", GBLUE, BLACK, 16, 0);
+				delay_ms(500);
+			break;
 			
-			if(Current < 0.1) sprintf(Calc, "%.1fmA", Current * 1000);
-			else if(Current < 1) sprintf(Calc, "%.0fmA", Current * 1000);
-			else if(Current > 10) sprintf(Calc, "%.2fA", Current);
-			else sprintf(Calc, "%.3fA", Current);
-			LCD_ShowString2416(0, 29, Calc, BLUE, BLACK);
-			SEGGER_RTT_printf(0, "%s\r\n", Calc);
+			case 1:
+				LCD_ChartInit();
+				sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC   V", Voltage, Current, Power, temp);
+				LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
+				LCD_ShowString(SIZE+2, 70, "0.0V", GBLUE, BLACK, 12, 0);
+				sprintf(Calc, "%.2f", Voltage_queue.max/2);
+				LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
+				sprintf(Calc, "%.2f", Voltage_queue.max);
+				LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
+				ClearPrint();
+				printQueue(&Voltage_queue);
+				delay_ms(500);
+			break;
 			
-			if(Power < 10) sprintf(Calc, "%.3fW", Power);
-			else if(Power < 100) sprintf(Calc, "%.2fW", Power);
-			else sprintf(Calc, "%.1fW", Power);
-			LCD_ShowString2416(0, 56, Calc, GBLUE, BLACK);
-			SEGGER_RTT_printf(0, "%s\r\n", Calc);
+			case 2:
+				LCD_ChartInit();
+				sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC   A", Voltage, Current, Power, temp);
+				LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
+				LCD_ShowString(SIZE+2, 70, "0.0A", GBLUE, BLACK, 12, 0);
+				sprintf(Calc, "%.2f", Current_queue.max/2);
+				LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
+				sprintf(Calc, "%.2f", Current_queue.max);
+				LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
+				ClearPrint();
+				printQueue(&Current_queue);
+				delay_ms(500);
+			break;
 			
-			sprintf(Calc, "MCU:%.1fC", temp);
-			LCD_ShowString(96, 2, Calc, GBLUE, BLACK, 12, 0);
-			sprintf(Calc, "Vcc:%.2fV", vcc);
-			LCD_ShowString(96, 18, Calc, GBLUE, BLACK, 12, 0);
-			sprintf(Calc, "%.2fmAh", mAh);
-			LCD_ShowString(96, 34, Calc, GBLUE, BLACK, 12, 0);
-			if(mWh < 10000) sprintf(Calc, "%.2fmWh", mWh);
-			else sprintf(Calc, "%.1fmWh", mWh);
-			LCD_ShowString(96, 50, Calc, GBLUE, BLACK, 12, 0);
-			LCD_ShowString(96, 62, "<------", GBLUE, BLACK, 16, 0);
+			case 3:
+				LCD_ChartInit();
+				sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC   P", Voltage, Current, Power, temp);
+				LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
+				LCD_ShowString(SIZE+2, 70, "0.0W", GBLUE, BLACK, 12, 0);
+				if(Power_queue.max > 10) 
+				{
+					sprintf(Calc, "%.0f", Power_queue.max/2);
+					LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
+					sprintf(Calc, "%.0f", Power_queue.max);
+					LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
+				}
+				else 
+				{
+					sprintf(Calc, "%.2f", Power_queue.max/2);
+					LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
+					sprintf(Calc, "%.2f", Power_queue.max);
+					LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
+				}
+				ClearPrint();
+				printQueue(&Power_queue);
+				delay_ms(500);
+			break;
+			
+			case 4:
+				sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC   ", Voltage, Current, Power, temp);
+				LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
+				sprintf(Calc, "Max  Avg  Min");
+				LCD_ShowString(18, 14, Calc, GBLUE, BLACK, 16, 0);
+				sprintf(Calc, "%s %.2f %.2f %.2f", "V", Voltage_queue.max, Voltage_queue.avg, Voltage_queue.min);
+				LCD_ShowString(1, 30, Calc, GBLUE, BLACK, 16, 0);
+				sprintf(Calc, "%s %.2f %.2f %.2f", "A", Current_queue.max, Current_queue.avg, Current_queue.min);
+				LCD_ShowString(1, 46, Calc, GBLUE, BLACK, 16, 0);
+				sprintf(Calc, "%s %.2f %.2f %.2f", "W", Power_queue.max, Power_queue.avg, Power_queue.min);
+				LCD_ShowString(1, 62, Calc, GBLUE, BLACK, 16, 0);
+
+				delay_ms(500);
+			break;
 		}
-		else 
-		{
-			LCD_DrawLine(0, 14, SIZE, 14, GBLUE);
-			LCD_DrawLine(0, 46, SIZE, 46, GBLUE);
-			LCD_DrawLine(0, 78, SIZE, 78, GBLUE);
-			sprintf(Calc, "%.1fV %.3fA %.1fW %.1fC   ", Voltage, Current, Power, temp);
-			LCD_ShowString(1, 1, Calc, GBLUE, BLACK, 12, 0);
-			LCD_ShowString(SIZE+2, 70, "0.0A", GBLUE, BLACK, 12, 0);
-			sprintf(Calc, "%.2f", queue.max/2);
-			LCD_ShowString(SIZE+2, 40, Calc, GBLUE, BLACK, 12, 0);
-			sprintf(Calc, "%.2f", queue.max);
-			LCD_ShowString(SIZE+2, 13, Calc, GBLUE, BLACK, 12, 0);
-			ClearPrint();
-			printQueue(&queue);
-		}
-		delay_ms(500);
     /* add user code end 3 */
   }
 }

@@ -5,14 +5,13 @@
 
 #define SIZE 130
 
-
 struct Queue {
 	float arr[SIZE];
 	int front, rear;
-	float max;
+	float max, min, avg;
 };
 
-float maxqueue(struct Queue* queue);
+void Countqueue(struct Queue* queue);
 void enqueue(struct Queue* queue, float item);
 int dequeue(struct Queue* queue);
 void printQueue(struct Queue* queue);

@@ -92,13 +92,13 @@ void LCD_DrawLine(u16 x1,u16 y1,u16 x2,u16 y2,u16 color)
                 color   矩形的颜色
       返回值：  无
 ******************************************************************************/
-void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2,u16 color)
-{
-	LCD_DrawLine(x1,y1,x2,y1,color);
-	LCD_DrawLine(x1,y1,x1,y2,color);
-	LCD_DrawLine(x1,y2,x2,y2,color);
-	LCD_DrawLine(x2,y1,x2,y2,color);
-}
+//void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2,u16 color)
+//{
+//	LCD_DrawLine(x1,y1,x2,y1,color);
+//	LCD_DrawLine(x1,y1,x1,y2,color);
+//	LCD_DrawLine(x1,y2,x2,y2,color);
+//	LCD_DrawLine(x2,y1,x2,y2,color);
+//}
 
 
 /******************************************************************************
@@ -108,27 +108,27 @@ void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2,u16 color)
                 color   圆的颜色
       返回值：  无
 ******************************************************************************/
-void Draw_Circle(u16 x0,u16 y0,u8 r,u16 color)
-{
-	int a,b;
-	a=0;b=r;	  
-	while(a<=b)
-	{
-		LCD_DrawPoint(x0-b,y0-a,color);             //3           
-		LCD_DrawPoint(x0+b,y0-a,color);             //0           
-		LCD_DrawPoint(x0-a,y0+b,color);             //1                
-		LCD_DrawPoint(x0-a,y0-b,color);             //2             
-		LCD_DrawPoint(x0+b,y0+a,color);             //4               
-		LCD_DrawPoint(x0+a,y0-b,color);             //5
-		LCD_DrawPoint(x0+a,y0+b,color);             //6 
-		LCD_DrawPoint(x0-b,y0+a,color);             //7
-		a++;
-		if((a*a+b*b)>(r*r))//判断要画的点是否过远
-		{
-			b--;
-		}
-	}
-}
+//void Draw_Circle(u16 x0,u16 y0,u8 r,u16 color)
+//{
+//	int a,b;
+//	a=0;b=r;	  
+//	while(a<=b)
+//	{
+//		LCD_DrawPoint(x0-b,y0-a,color);             //3           
+//		LCD_DrawPoint(x0+b,y0-a,color);             //0           
+//		LCD_DrawPoint(x0-a,y0+b,color);             //1                
+//		LCD_DrawPoint(x0-a,y0-b,color);             //2             
+//		LCD_DrawPoint(x0+b,y0+a,color);             //4               
+//		LCD_DrawPoint(x0+a,y0-b,color);             //5
+//		LCD_DrawPoint(x0+a,y0+b,color);             //6 
+//		LCD_DrawPoint(x0-b,y0+a,color);             //7
+//		a++;
+//		if((a*a+b*b)>(r*r))//判断要画的点是否过远
+//		{
+//			b--;
+//		}
+//	}
+//}
 
 /******************************************************************************
       函数说明：显示汉字串
@@ -526,12 +526,12 @@ void LCD_ShowString(u16 x,u16 y,char *p,u16 fc,u16 bc,u8 sizey,u8 mode)
       入口数据：m底数，n指数
       返回值：  无
 ******************************************************************************/
-u32 mypow(u8 m,u8 n)
-{
-	u32 result=1;	 
-	while(n--)result*=m;
-	return result;
-}
+//u32 mypow(u8 m,u8 n)
+//{
+//	u32 result=1;	 
+//	while(n--)result*=m;
+//	return result;
+//}
 
 
 /******************************************************************************
@@ -544,26 +544,26 @@ u32 mypow(u8 m,u8 n)
                 sizey 字号
       返回值：  无
 ******************************************************************************/
-void LCD_ShowIntNum(u16 x,u16 y,u16 num,u8 len,u16 fc,u16 bc,u8 sizey)
-{         	
-	u8 t,temp;
-	u8 enshow=0;
-	u8 sizex=sizey/2;
-	for(t=0;t<len;t++)
-	{
-		temp=(num/mypow(10,len-t-1))%10;
-		if(enshow==0&&t<(len-1))
-		{
-			if(temp==0)
-			{
-				LCD_ShowChar(x+t*sizex,y,' ',fc,bc,sizey,0);
-				continue;
-			}else enshow=1; 
-		 	 
-		}
-	 	LCD_ShowChar(x+t*sizex,y,temp+48,fc,bc,sizey,0);
-	}
-} 
+//void LCD_ShowIntNum(u16 x,u16 y,u16 num,u8 len,u16 fc,u16 bc,u8 sizey)
+//{         	
+//	u8 t,temp;
+//	u8 enshow=0;
+//	u8 sizex=sizey/2;
+//	for(t=0;t<len;t++)
+//	{
+//		temp=(num/mypow(10,len-t-1))%10;
+//		if(enshow==0&&t<(len-1))
+//		{
+//			if(temp==0)
+//			{
+//				LCD_ShowChar(x+t*sizex,y,' ',fc,bc,sizey,0);
+//				continue;
+//			}else enshow=1; 
+//		 	 
+//		}
+//	 	LCD_ShowChar(x+t*sizex,y,temp+48,fc,bc,sizey,0);
+//	}
+//} 
 
 
 /******************************************************************************
@@ -576,24 +576,24 @@ void LCD_ShowIntNum(u16 x,u16 y,u16 num,u8 len,u16 fc,u16 bc,u8 sizey)
                 sizey 字号
       返回值：  无
 ******************************************************************************/
-void LCD_ShowFloatNum1(u16 x,u16 y,float num,u8 len,u16 fc,u16 bc,u8 sizey)
-{         	
-	u8 t,temp,sizex;
-	u16 num1;
-	sizex=sizey/2;
-	num1=num*100;
-	for(t=0;t<len;t++)
-	{
-		temp=(num1/mypow(10,len-t-1))%10;
-		if(t==(len-2))
-		{
-			LCD_ShowChar(x+(len-2)*sizex,y,'.',fc,bc,sizey,0);
-			t++;
-			len+=1;
-		}
-	 	LCD_ShowChar(x+t*sizex,y,temp+48,fc,bc,sizey,0);
-	}
-}
+//void LCD_ShowFloatNum1(u16 x,u16 y,float num,u8 len,u16 fc,u16 bc,u8 sizey)
+//{         	
+//	u8 t,temp,sizex;
+//	u16 num1;
+//	sizex=sizey/2;
+//	num1=num*100;
+//	for(t=0;t<len;t++)
+//	{
+//		temp=(num1/mypow(10,len-t-1))%10;
+//		if(t==(len-2))
+//		{
+//			LCD_ShowChar(x+(len-2)*sizex,y,'.',fc,bc,sizey,0);
+//			t++;
+//			len+=1;
+//		}
+//	 	LCD_ShowChar(x+t*sizex,y,temp+48,fc,bc,sizey,0);
+//	}
+//}
 
 
 /******************************************************************************
@@ -604,20 +604,20 @@ void LCD_ShowFloatNum1(u16 x,u16 y,float num,u8 len,u16 fc,u16 bc,u8 sizey)
                 pic[]  图片数组    
       返回值：  无
 ******************************************************************************/
-void LCD_ShowPicture(u16 x,u16 y,u16 length,u16 width,const u8 pic[])
-{
-	u16 i,j;
-	u32 k=0;
-	LCD_Address_Set(x,y,x+length-1,y+width-1);
-	for(i=0;i<length;i++)
-	{
-		for(j=0;j<width;j++)
-		{
-			LCD_WR_DATA8(pic[k*2]);
-			LCD_WR_DATA8(pic[k*2+1]);
-			k++;
-		}
-	}			
-}
+//void LCD_ShowPicture(u16 x,u16 y,u16 length,u16 width,const u8 pic[])
+//{
+//	u16 i,j;
+//	u32 k=0;
+//	LCD_Address_Set(x,y,x+length-1,y+width-1);
+//	for(i=0;i<length;i++)
+//	{
+//		for(j=0;j<width;j++)
+//		{
+//			LCD_WR_DATA8(pic[k*2]);
+//			LCD_WR_DATA8(pic[k*2+1]);
+//			k++;
+//		}
+//	}			
+//}
 
 
