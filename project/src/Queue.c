@@ -29,20 +29,19 @@ void enqueue(struct Queue* queue, float item) {
 	queue->rear = (queue->rear + 1) % SIZE;
 }
 
-int dequeue(struct Queue* queue) {
-    if (queue->front == queue->rear) {
-        SEGGER_RTT_printf(0, "Queue is empty\n");
-        return -1;
-    }
-    int item = queue->arr[queue->front];
-    queue->front = (queue->front + 1) % SIZE;
-    return item;
-}
+//int dequeue(struct Queue* queue) {
+//    if (queue->front == queue->rear) {
+//        SEGGER_RTT_printf(0, "Queue is empty\n");
+//        return -1;
+//    }
+//    int item = queue->arr[queue->front];
+//    queue->front = (queue->front + 1) % SIZE;
+//    return item;
+//}
 
 void ClearPrint(void)
 {
-	int i =0;
-	for(i=0;i<SIZE;i++)
+	for(int i=0;i<SIZE;i++)
 	{
 		LCD_DrawPoint(i, SavedPoint[i], BLACK);
 	}

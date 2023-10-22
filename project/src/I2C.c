@@ -36,9 +36,9 @@ void INA226_Init(void)
 		delay_ms(100);
 	} while(id != 0x5449);
 	I2C_Write_2Byte(0x00, 0x45FF); // Configuration Register
-	I2C_Write_2Byte(0x05, 0x0A00); // Calibration Register, 5120, 0.1mA
-	//LSB=0.0002mA,R=0.01R Cal=0.00512/(0.0002*0.01)=2560=0x0A00
-	SEGGER_RTT_printf(0, "INA226 0x05=0x%x\r\n", 0x0A00);
+	I2C_Write_2Byte(0x05, 0x1400); // Calibration Register, 5120, 0.1mA
+	//LSB=0.0002mA,R=0.005R Cal=0.00512/(0.0002*0.005)=5120=0x1400
+	SEGGER_RTT_printf(0, "INA226 0x05=0x%x\r\n", 0x1400);
 	SEGGER_RTT_SetTerminal(0);
 }
 

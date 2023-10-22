@@ -50,6 +50,7 @@
 /* private variables ---------------------------------------------------------*/
 /* add user code begin private variables */
 extern __IO uint16_t key_state;
+extern __IO uint8_t TMR16_Main_Flag;
 /* add user code end private variables */
 
 /* private function prototypes --------------------------------------------*/
@@ -64,7 +65,6 @@ extern __IO uint16_t key_state;
 
 /* external variables ---------------------------------------------------------*/
 /* add user code begin external variables */
-__IO extern uint8_t EXINT_Counter;
 /* add user code end external variables */
 
 /**
@@ -289,7 +289,6 @@ void TMR3_GLOBAL_IRQHandler(void)
   /* add user code end TMR3_GLOBAL_IRQ 1 */
 }
 
-extern __IO uint8_t TMR16_Main_Counter;
 /**
   * @brief  this function handles TMR16 handler.
   * @param  none
@@ -300,7 +299,7 @@ void TMR16_GLOBAL_IRQHandler(void)
   /* add user code begin TMR16_GLOBAL_IRQ 0 */
 	//SEGGER_RTT_printf(0, "TMR16 IRQ\r\n");
 	tmr_flag_clear(TMR16, TMR_OVF_FLAG);
-	TMR16_Main_Counter++;
+	TMR16_Main_Flag++;
   /* add user code end TMR16_GLOBAL_IRQ 0 */
   /* add user code begin TMR16_GLOBAL_IRQ 1 */
 

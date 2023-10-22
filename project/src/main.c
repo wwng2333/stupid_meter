@@ -56,10 +56,9 @@ volatile uint8_t usart1_rx_counter = 0x00;
 char Calc[32] = {0};
 float temp, vcc = 0.0f;
 __IO uint16_t adc1_ordinary_valuetab[2] = {0};
-__IO uint8_t EXINT_Counter = 0;
 __IO uint8_t Status = 0;
 __IO uint8_t USE_HORIZONTAL = 3;
-__IO uint8_t TMR16_Main_Counter = 0;
+__IO uint8_t TMR16_Main_Flag = 0;
 struct Queue Voltage_queue = { .front = 0, .rear = 0};
 struct Queue Current_queue = { .front = 0, .rear = 0};
 struct Queue Power_queue = { .front = 0, .rear = 0};
@@ -140,6 +139,7 @@ void LCD_ChartPrint(char flag, char unit, struct Queue* queue)
 	ClearPrint();
 	printQueue(queue);
 }
+
 /**
   * @brief main function.
   * @param  none
@@ -239,8 +239,7 @@ int main(void)
 					SEGGER_RTT_printf(0, "single\r\n");
 					if(Status < 4) Status++;
 					else Status = 0;
-					EXINT_Counter = 0;
-					TMR16_Main_Counter++;
+					TMR16_Main_Flag++;
 					LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
 				break;
 				case 0x8002:  
@@ -249,6 +248,7 @@ int main(void)
 					else if (USE_HORIZONTAL == 3) USE_HORIZONTAL = 2;
 					LCD_Init();
 					LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
+					TMR16_Main_Flag++;
 				break;
 				case 0x8003: 
 					SEGGER_RTT_printf(0, "long\r\n");
@@ -270,9 +270,9 @@ int main(void)
 //			count++;
 //		}
 		
-		if(TMR16_Main_Counter)
+		if(TMR16_Main_Flag)
 		{
-			TMR16_Main_Counter = 0;
+			TMR16_Main_Flag = 0;
 			ADC1_Readtemp();
 			ADC1_ReadVCC();
 			adc_ordinary_software_trigger_enable(ADC1, TRUE);
@@ -315,7 +315,10 @@ int main(void)
 					if(mWh < 10000) sprintf(Calc, "%.2fmWh", mWh);
 					else sprintf(Calc, "%.1fmWh", mWh);
 					LCD_ShowString(96, 50, Calc, GBLUE, BLACK, 12, 0);
-					LCD_ShowString(96, 62, "<------", GBLUE, BLACK, 16, 0);
+					if(USE_HORIZONTAL == 3) 
+						LCD_ShowString(96, 62, "<------", GBLUE, BLACK, 16, 0);
+					else 
+						LCD_ShowString(96, 62, "------>", GBLUE, BLACK, 16, 0);
 				break;
 				
 				case 1:
