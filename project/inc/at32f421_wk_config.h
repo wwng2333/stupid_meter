@@ -46,6 +46,7 @@ extern "C" {
 #include "Queue.h"
 #include "w25qxx.h"
 #include "TMR3.h"
+#include <sfud.h>
 /* add user code end private includes */
 
 /* exported types -------------------------------------------------------------*/
